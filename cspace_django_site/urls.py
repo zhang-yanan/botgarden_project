@@ -25,4 +25,5 @@ urlpatterns = patterns('',
                        url(r'^$', 'hello.views.home', name='home'),
                        url(r'^service/', include('service.urls')),
                        url(r'^accounts/login/$', views.login, name='login'),
+                       url(r'^accounts/logout/$', views.logout_then_login, name='logout'),
                        )
