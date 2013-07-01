@@ -198,11 +198,14 @@ a#logout:hover { background-color: #333; color: #FFF; }
 
 #branding h1 {
     text-indent: -9999px; /* Hides the text in the h1 tag, but still makes text available for screenreaders */
-
-    background-image: url(../images/header-logo.png), url(../images/header-logo-cspace.png);
-    background-repeat: no-repeat;
-    background-position: left top, right top;
     height: 75px; /* The height of the tallest image referenced above in background-image */
+    
+    /* To add your own institution's header image, place the image in: 
+        cspace_django_project/cspace_django_site/static/cspace_django_site/images/header-logo.png
+        Then comment the following background line, and uncomment the line after that. */
+    
+    background: url(../images/header-logo-cspace.png) no-repeat right top;
+    /*    background: url(../images/header-logo.png) no-repeat left top, url(../images/header-logo-cspace.png) no-repeat right top;*/
 }
 
 #login-content p {
