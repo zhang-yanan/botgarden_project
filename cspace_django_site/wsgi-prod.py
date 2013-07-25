@@ -27,7 +27,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", SITE_NAME + ".settings")
 # can detect the path for the WSGI's Apache mount point.  This value must
 # correspond the the value used to set Apache's WSGIScriptAlias mount point.
 #
-WSGI_BASE = '/botgarden_project_dev'
+WSGI_BASE = '/botgarden_project'
 os.environ.setdefault(SITE_NAME + ".WSGI_BASE", WSGI_BASE)
 
 # This application object is used by any WSGI server configured to use this

@@ -71,7 +71,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, '../static_root')
 
 # URL prefix for static files.
 # Example: "http://intakes.com/static/", "http://static.intakes.com/"
-STATIC_URL = '/botgarden_project_dev_static/'
+STATIC_URL = '/botgarden_project_static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
