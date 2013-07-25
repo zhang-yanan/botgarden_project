@@ -1,4 +1,4 @@
-# Django settings for cspace_django_site project.
+# Django settings for botgarden_project project.
 import os
 import logging
 
@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'hello',
+    'ireports',
     'service',
 )
 
