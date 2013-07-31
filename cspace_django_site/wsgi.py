@@ -15,6 +15,20 @@ framework.
 """
 import os
 
+# This would make the WSGI_BASE dependent upon the project's parent folder
+# but Amy can't get it to work for some reason, commenting out for now. 
+
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# PROJECT_DIR = os.path.dirname(BASE_DIR)
+# ENVIRONMENT_DIR = os.path.dirname(PROJECT_DIR)
+# ENVIRONMENT = os.path.basename(ENVIRONMENT_DIR)
+
+# wsgi_base_configs = {
+#     'dev': '/botgarden_project_dev',
+#     'prod': '/botgarden_project',
+#     'qa': '/botgarden_project_qa',
+# }
+
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks
 # if running multiple sites in the same mod_wsgi process. To fix this, use
 # mod_wsgi daemon mode with each site in its own daemon process, or use
@@ -28,6 +42,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", SITE_NAME + ".settings")
 # correspond the the value used to set Apache's WSGIScriptAlias mount point.
 #
 WSGI_BASE = '/botgarden_project_dev'
+# if wsgi_base_configs.get(ENVIRONMENT):
+#     WSGI_BASE = wsgi_base_configs[ENVIRONMENT]
+
 os.environ.setdefault(SITE_NAME + ".WSGI_BASE", WSGI_BASE)
 
 # This application object is used by any WSGI server configured to use this

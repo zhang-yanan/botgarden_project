@@ -10,8 +10,8 @@ from django import forms
 
 from operator import itemgetter
 
-#JRXMLDIRECTORY = '/usr/local/share/django/jrxml/%s'
-JRXMLDIRECTORY = '../jrxml/%s'
+JRXMLDIRECTORY = '/usr/local/share/django/jrxml/%s'
+# JRXMLDIRECTORY = '../jrxml/%s'
 # alas, there are many ways the XML parsing functionality might be installed.
 # the following code attempts to find and import the best...
 try:
