@@ -1,0 +1,85 @@
+{% extends "cspace_django_site/base_site.html" %}
+{% load i18n admin_static %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/tablesorter.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/pahma.css" %}"/>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "publicsearch/js/PublicSearch.js" %}"></script>
+    <script type="text/javascript" src="{% static "publicsearch/js/jquery.tablesorter.js" %}"></script>
+{% endblock %}
+
+{% block loginBtn %}
+<div id="user-tools">
+    <a href="{% url 'login' %}?next=/pahma_project/search/publicsearch/" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
+</div>
+{% endblock %}
+
+{% block branding %}
+    <h4 class="bannerLeft"></h4>
+    <h4 class="bannerRight"></h4>
+    <h1 class="bannerTitle" id="site-name">{% trans ' ' %}</h1>
+    <div style="float:right; height: 30px;">
+        <a href="#" id="about">About</a>
+        <a href="#" id="help">Help</a>
+        <a href="#" id="terms">Terms</a>
+        <a href="#" id="credits">Credits</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div id="content-main">
+        <div class="toggled">
+            <div id="aboutTarget" style="display:none">
+                {% include "about.html" %}
+             </div>
+            <div id="helpTarget" style="display:none">
+                {% include "help.html" %}
+            </div>
+            <div id="creditsTarget" style="display:none">
+                {% include "credits.html" %}
+            </div>
+        </div>
+        <div class="searchPanel">
+            {% if resultsOnly %}
+                {% include "showfields.html" %}
+            {% else %}
+                <form class="searchForm" id="search">
+                    {% csrf_token %}
+                    <div>
+                        {% include "fields.html" %}
+                        {% include "buttons.html" %}
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+        <div  id="waitingImage" style="display: none">
+            <img src="{% static "cspace_django_site/images/timer-animated.gif" %}" alt="Searching..."/>
+       </div>
+        <div id="resultsPanel">
+            {% if items %}
+                {% include "searchResults.html" %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+  <table width="100%">
+    <tbody>
+    <tr>
+      <td style="vertical-align: middle">Current time: {{ timestamp }}. This is rev1.</td>
+      <td style="vertical-align: middle;width: 70px;">powered by </td>
+      <td style="text-align: right; width: 160px;"><img src="{% static "cspace_django_site/images/header-logo-cspace.png" %}" height="30px"></td>
+    </tr>
+    </tbody>
+  </table>
+{% endblock %}
+
+

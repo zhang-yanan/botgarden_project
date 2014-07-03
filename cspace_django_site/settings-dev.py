@@ -71,7 +71,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, '../static_root')
 
 # URL prefix for static files.
 # Example: "http://intakes.com/static/", "http://static.intakes.com/"
-STATIC_URL = '/botgarden_project_dev_static/'
+STATIC_URL = '/static_root/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -90,7 +90,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '4vzb=dif9s33-dz9y=*0t7se44cpp6fzxu(59b2_ke^yk0ke1%'
+SECRET_KEY = '4vzb=dif9s33-dz9y=*0t7se44xxxxx6fzxu(59b2_keyk0ke1'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'hello',
     'ireports',
+    'publicsearch',
     'service',
 )
 

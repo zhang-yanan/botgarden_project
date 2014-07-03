@@ -1,0 +1,41 @@
+# Possible parameter specification spreadsheet for a django portal app.  Caveat lector!														
+#														
+date			06/16/14											
+revision			1.00											
+title		UCB Cspace Portals	Bot Garden											
+#														
+#		Fields												
+#														
+header		Name	Label	SolrField	Searchable	X	Role	Search	Facet	bMapper	fullDisplay	listDisplay	gridDisplay	inCSV
+field	1	id	id	id			id							
+field	2	accessionnumber	Accession Number	accessionnumber_s			objectno,accession	1		1	1	1	1	1
+field	3	determination	Scientific Name	determination_s			keyword,mainentry	2		2	2	2	2	2
+field	4	collector	Collector	collector_s	x		keyword	3	1	3	3		3	3
+field	5	collectornumber	Collector Number	collectornumber_s	x	x	keyword							
+field	6	collectiondate	Collection Date	collectiondate_s	x	x	keyword	4		4	4			4
+field	7	earlycollectiondate	Early Collection Date	earlycollectiondate_s	x		keyword							
+field	8	latecollectiondate	Late Colleciton Date	latecollectiondate_s	x		keyword							
+field	9	fcpverbatim	Field Collection Place	fcpverbatim_s	x		keyword	5		5	5			5
+field	10	collcounty	County	collcounty_s	x	x	dropdown	6	2	6	6	3	4	6
+field	11	collstate	State	collstate_s	x	x	dropdown	7	3	7	7	4		7
+field	12	collcountry	Country	collcountry_s	x		dropdown	8	4	8	8	5		8
+field	13	elevation	Elevation	elevation_s	x	x	keyword	9		9	9			9
+field	14	minelevation	Min elevation	minelevation_s	x		keyword							
+field	15	maxelevation	Max elevation	maxelevation_s	x		keyword							
+field	16	elevationunit	Elevation unit	elevationunit_s	x	x	keyword							
+field	17	habitat	Habitat	habitat_s	x	x	keyword	10		10	10		5	10
+field	18	latlong	LatLong	latlong_p	x	x	location			11	11			11
+field	19	trscoordinates	TRS coordinates	trscoordinates_s	x		keyword							
+field	20	datum	Datum	datum_s	x		dropdown							
+field	21	coordinatesource	Coordinate source	coordinatesource_s	x	x	keyword							
+field	22	coordinateuncertainty	Coordinate uncertainty	coordinateuncertainty_s	x	x	keyword							
+field	23	coordinateuncertaintyunit	Coordinate uncertainty unit	coordinateuncertaintyunit_s	x	x	keyword							
+field	24	family	Family	family_s	x	x	dropdown	11	5	12	12			12
+field	25	gardenlocation	Garden Location	gardenlocation_s	x	x	keyword	12	7	13	13	7	6	13
+field	26	dataquality	Data Quality	dataquality_s	x	x	keyword							
+field	27	locality	Locality	locality_s	x	x	keyword				14			14
+field	28	csid	CSID	csid_s	x	x	keyword							
+field	29	rare	Rare	rare_s	x		dropdown	13	7	14	15	8	7	15
+field	30	deadflag	Dead	deadflag_s	x	x	dropdown	14	8	15	16	9	8	16
+field	31	determinationnoauth	Determination	determinationnoauth_s	x	x	keyword		9					
+field	32	reasonformove	Reason for Move	reasonformove_s	x	x	keyword	15		16	17			17

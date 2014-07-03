@@ -69,6 +69,40 @@ a:hover { color: #036; }
 .size1of3{width:33.33333%;}
 .size2of3{width:66.66666%;}
 
+.size1of10{width:10%;}
+.size2of10{width:20%;}
+
+.grid{
+    margin: 5px;
+    /* chrome & firefox only */
+	display: inline-block;
+    width: 180px;
+    vertical-align: top;
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+}
+
+p.tiny{
+    font-size:10px;
+    margin: 0 0 0 0;
+}
+
+.sectionheader {
+    width: 100%;
+    padding-top: 10px;
+    height: 20px;
+    background: lightgray;
+    text-align: left;
+    padding: 3px;
+    margin-bottom: 6px;
+    display: inline;
+}
+
+li.facet {
+    padding-left: 20px ;
+    text-indent: -20px ;
+}
 /*******************************************
     SPECIFIC LAYOUT STYLES - LAYOUT IDS
     ------------------------------------
@@ -158,6 +192,11 @@ a:hover { color: #036; }
     line-height: 13px;
 }
 
+.big {
+    font-weight: bold;
+    font-size: 14px;
+    padding-right: 10px;
+}
 /*********************************************
     SPECIFIC CONTENT STYLES - CONTENT IDS
     ------------------------------------
@@ -204,7 +243,7 @@ a#logout:hover { background-color: #333; color: #FFF; }
         cspace_django_project/cspace_django_site/static/cspace_django_site/images/header-logo.png
         Then comment the following background line, and uncomment the line after that. */
     
-/*    background: url(../images/header-logo-cspace.png) no-repeat right top;*/
+    #background: url(../images/header-logo-cspace.png) no-repeat right top;
     background: url(../images/header-logo.png) no-repeat left top, url(../images/header-logo-cspace.png) no-repeat right top;
 }
 

@@ -1,0 +1,40 @@
+<table width="100%">
+
+    {% for field in FIELDS.Search %}
+        <tr>
+            <td {% if field.style %} style="{{ field.style }}"{% endif %}>
+                <label>{{ field.label }}</label>
+            </td>
+
+            {% if 'keyword' in field.fieldtype %}
+                <td style="width:100px">
+                <select id="{{ field.name }}_qualifier" name="{{ field.name }}_qualifier">
+                    {% for option in qualifiers %}
+                        <option value="{{ option }}"{% if option == searchValues.include_child %}
+                                selected{% endif %}>{{ option }}</option>
+                    {% endfor %}
+                </select>
+                </td>
+            {% else %}
+                <td/>
+            {% endif %}
+            {% if fieldValues.include_child %}
+                <label name="{{ field }}_include_child">Include child terms?</label>
+                <input type="checkbox" id="{{ field }}_include_child" name="{{ field }}_include_child">
+            {% endif %}
+            <td>
+            {% if 'dropdown' in field.fieldtype %}
+                <select id="{{ field.name }}" name="{{ field.name }}">
+                    <option value="">Please select</option>
+                    {% for value in field.dropdowns %}
+                        <option value="{{ value.0 }}"{% if value.0 == searchValues.dropdown %} selected{% endif %}>{{ value.0|slice:":40" }} ({{ value.1 }})</option>
+                    {% endfor %}
+                </select>
+            {% else %}
+                <input type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}"
+                       value="{{ searchValues.field }}"/>
+            {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>

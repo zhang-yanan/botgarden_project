@@ -1,0 +1,64 @@
+<div class="info">
+    <h2>Searching</h2>
+
+    <p>You can enter search criteria by typing into the text boxes or selecting
+        an option from a pick list and then clicking one of the "Display:" options.
+        Any combination of fields may be used.</p>
+
+    <p>Some fields have an option of searching as either "keyword", "phrase", or
+        "exact".</p>
+
+    <p>
+    <li><strong>Exact</strong>: This will only return records where the field value is <i>exactly</i> what
+        you input (e.g. searching for locality <tt>Livermore Valley</tt> will only retrieve
+        records where the locality is exactly <i>Livermore Valley</i>)
+    </li>
+    <li><strong>Phrase</strong>: Returned records will contain exactly what you input, but may have
+        more text before or after it (e.g. searching <tt>Livermore Valley</tt> will also
+        return <i>eastern Livermore Valley</i>, <i>4 mi west of Livermore Valley</i>, etc.)
+    </li>
+    <li><strong>Keyword</strong>: This will return all records that contain all of the words
+        entered in that field, in any order (e.g. searching <tt>Livermore Valley</tt> will
+        also return <i>Arroyo Mocho Valley s of Livermore</i>, etc.)
+    </li>
+    </p>
+    <h2>Displaying Search Results</h2>
+
+    <p>If your search has one or more results, you'll see three panes presented -- Results, Facets, and Maps.</p>
+
+    <h3>Results</h3>
+
+    <p>There are three options for display.
+    <li>List is ideal for seeing summaries of
+        many records at once.
+    </li>
+    <li>Full shows the full details of each record, including
+        images.
+    </li>
+    <li>Grid is ideal for viewing many specimens at once while also
+        displaying images. Clicking the specimen ID number in any view will bring
+        you to the Full view of that specimen. Clicking an image will open the full
+        resolution image in a new tab.
+    </li>
+    </p>
+
+    <h3>Facets</h3>
+
+    <p>After performing a search, clicking the "Facets" tab will show you a list, in descending frequency order,
+        of values which appear the records returned by your search. For
+        example, if you search for Collector <tt>W. L. Jepson</tt> (exact), you will see
+        under County <i>San Bernardino 1650</i>, <i>Solano 1385</i> etc., meaning there are
+        1650 Jepson specimens collected in San Bernardino Co., 1385 specimens from Solano Co.
+        etc. Clicking on the name of a facet will refine your search, returning
+        only the results matching that value.</p>
+
+    <h3>Maps</h3>
+
+    <p>You may choose two different mapping options for your result set:
+        <li>
+    <p><strong>Berkeley Mapper</strong>: your results will be passed to Berkeley Mapper and plotted there.</li>
+    <li><p><strong>Google Static Maps</strong>: up to 65 of your results will be plotted on the spot using Google Maps.
+    </li>
+    Note that only records which have LatLongs will be plotted!
+    </p>
+</div>
