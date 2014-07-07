@@ -62,17 +62,6 @@ def parseRows(rows):
                         fieldhash[fieldkeys[n]] = v
                     fieldhash['style'] = 'width:200px' # temporary hack!
                     FIELDS[function].append(fieldhash)
-            #for i,r in enumerate(row):
-            #    if r != '':
-            #        pd[header[i]].append(row[labels['Name']])
-        #try:
-        #    fieldsets[row[labels['Name']]] = {}
-        #    for i,r in enumerate(row):
-        #        if r != '':
-        #            fieldsets[row[labels['Name']]][header[i]] = r
-        #except:
-        #    pass
-
 
     return FIELDS,PARMS
 
@@ -82,6 +71,7 @@ MAXMARKERS = int(config.get('search', 'MAXMARKERS'))
 MAXRESULTS = int(config.get('search', 'MAXRESULTS'))
 MAXLONGRESULTS = int(config.get('search', 'MAXLONGRESULTS'))
 MAXFACETS = int(config.get('search', 'MAXFACETS'))
+EMAILABLEURL = config.get('search', 'EMAILABLEURL')
 IMAGESERVER = config.get('search', 'IMAGESERVER')
 BMAPPERSERVER = config.get('search', 'BMAPPERSERVER')
 BMAPPERDIR = config.get('search', 'BMAPPERDIR')
@@ -91,6 +81,8 @@ SOLRCORE = config.get('search', 'SOLRCORE')
 LOCALDIR = config.get('search', 'LOCALDIR')
 SEARCH_QUALIFIERS = config.get('search', 'SEARCH_QUALIFIERS').split(',')
 FIELDDEFINITIONS = config.get('search', 'FIELDDEFINITIONS')
+CSVPREFIX = config.get('search', 'CSVPREFIX')
+CSVEXTENSION = config.get('search', 'CSVEXTENSION')
 
 # get "frontend" configuration from the ... frontend configuaration file FIELDDEFINITIONS
 
@@ -108,4 +100,4 @@ for p in PARMS:
         LOCATION = PARMS[p][3]
 
 if LOCATION == '':
-    print "LOCATION not set, please specify a varible as 'location'"
+    print "LOCATION not set, please specify a variable as 'location'"

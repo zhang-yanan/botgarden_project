@@ -51,7 +51,7 @@
             {% endif %}
 
             {% for i in item.otherfields %}
-                {% if i.value %}<div>{{ i.label }}: <a class="facet-item" data-facetType="i.name">{{ i.value }}</a></div>{% endif %}
+                {% if i.value %}<div>{{ i.label }}: <a class="facet-item" data-facetType="{{ i.name }}">{{ i.value }}</a></div>{% endif %}
             {% endfor %}
 
              {% if item.associatedtaxa %}

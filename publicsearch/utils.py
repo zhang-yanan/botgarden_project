@@ -12,7 +12,7 @@ from cspace_django_site.main import cspace_django_site
 # global variables
 
 from appconfig import MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR
-from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS, PARMS, FIELDS, LOCATION
+from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS, PARMS, FIELDS, LOCATION, EMAILABLEURL
 
 SolrIsUp = True # an initial guess! this is verified below...
 FACETS = {}
@@ -223,6 +223,7 @@ def extractValue(listItem,key):
 def setConstants(context):
     if not SolrIsUp: context['errormsg'] = 'Solr is down!'
     context['imageserver'] = IMAGESERVER
+    context['emailableurl'] = EMAILABLEURL
     context['dropdowns'] = FACETS
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
     context['qualifiers'] = SEARCH_QUALIFIERS
@@ -379,7 +380,7 @@ def doSearch(solr_server, solr_core, context):
 
         for p in FIELDS[displayFields]:
             try:
-                otherfields.append({'label':p['label'],'value': extractValue(listItem,p['solrfield'])})
+                otherfields.append({'label':p['label'],'name':p['name'],'value': extractValue(listItem,p['solrfield'])})
 
             except:
                 pass
@@ -403,19 +404,19 @@ def doSearch(solr_server, solr_core, context):
 
     #print 'items',len(context['items'])
     context['count'] = response._numFound
-    m = {}
     context['labels'] = []
     context['fields'] = []
 
+    m = {}
     #for p in FIELDS[displayFields]:
     #    context['labels'].append(p['label'])
-    #for p in PARMS:
-        #m[PARMS[p][3].replace('_txt', '_s')] = p
+    for p in PARMS:
+        m[PARMS[p][3]] = PARMS[p][4]
     #    if PARMS[p][3] in facetfields:
     #        context['fields'].append(PARMS[p][0])
 
     context['labels'] = [p['label'] for p in FIELDS[displayFields]]
-    context['facets'] = [[f, facets[f]] for f in facetfields]
+    context['facets'] = [[m[f], facets[f]] for f in facetfields]
     context['fields'] = getfields('FacetLabels')
     context['range'] = range(len(facetfields))
     context['pixonly'] = pixonly
@@ -446,13 +447,14 @@ if 'errormsg' in context:
     print 'Initial solr search failed. Concluding that Solr is down or unreachable... Will not be trying again! Please fix and restart!'
 else:
     for facet in context['facets']:
-        #print 'facet',facet[0],len(facet[1])
-        if facet[0] in DROPDOWNS:
-            FACETS[facet[0]] = sorted(facet[1])
+        print 'facet',facet[0],len(facet[1])
+        FACETS[facet[0]] = sorted(facet[1])
+        #if facet[0] in DROPDOWNS:
+        #    FACETS[facet[0]] = sorted(facet[1])
         # if the facet is not in a dropdown, save the memory for something better
-        else:
-            FACETS[facet[0]] = []
+        #else:
+        #    FACETS[facet[0]] = []
         # build dropdowns for searching
         for f in FIELDS['Search']:
-            if f['solrfield'] == facet[0] and f['fieldtype'] == 'dropdown':
+            if f['name'] == facet[0] and f['fieldtype'] == 'dropdown':
                 f['dropdowns'] = facet[1]

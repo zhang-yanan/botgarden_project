@@ -12,7 +12,7 @@
         <tr>
             <td><input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked></td>
             {% for i in item.otherfields %}
-                <td><a class="facet-item" data-facetType="i.name">{{ i.value }}</a></td>
+                <td><a class="facet-item" data-facetType="{{ i.name }}">{{ i.value }}</a></td>
             {% endfor %}
             <!-- td><a title="{{ item.earlycollectiondate }}" class="facet-item" data-facetType="collectiondate">{{ item.collectiondate }}</a></td -->
         </tr>
