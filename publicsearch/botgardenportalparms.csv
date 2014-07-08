@@ -1,8 +1,8 @@
 # Possible parameter specification spreadsheet for a django portal app.  Caveat lector!														
 #														
-date			06/16/14											
-revision			1.00											
-title		UCB Cspace Portals	Bot Garden											
+date			07/07/14											
+revision			1.01											
+title		UCB Cspace Portals	Botanical Garden											
 #														
 #		Fields												
 #														
@@ -33,9 +33,10 @@ field	23	coordinateuncertaintyunit	Coordinate uncertainty unit	coordinateuncerta
 field	24	family	Family	family_s	x	x	dropdown	11	5	12	12			12
 field	25	gardenlocation	Garden Location	gardenlocation_s	x	x	keyword	12	7	13	13	7	6	13
 field	26	dataquality	Data Quality	dataquality_s	x	x	keyword							
-field	27	locality	Locality	locality_s	x	x	keyword				14			14
+field	27	locality	Locality	locality_s	x	x	keyword	13			14			14
 field	28	csid	CSID	csid_s	x	x	keyword							
 field	29	rare	Rare	rare_s	x		dropdown	13	7	14	15	8	7	15
 field	30	deadflag	Dead	deadflag_s	x	x	dropdown	14	8	15	16	9	8	16
-field	31	determinationnoauth	Determination	determinationnoauth_s	x	x	keyword		9					
-field	32	reasonformove	Reason for Move	reasonformove_s	x	x	keyword	15		16	17			17
+field	31	determinationnoauth	Determination	determinationnoauth_s	x	x	keyword							
+field	32	reasonformove	Reason for Move	reasonformove_s	x	x	keyword							
+field	33	text	Keyword	text	x	x	keyword	15						

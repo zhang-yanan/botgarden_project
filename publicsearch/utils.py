@@ -94,7 +94,7 @@ def parseTerm(queryterm):
 
 def makeMarker(location):
     if location:
-        return location
+        return location.replace(' ','')
     else:
         return None
 
@@ -387,6 +387,8 @@ def doSearch(solr_server, solr_core, context):
                 #raise
                 #otherfields.append({'label':p['label'],'value': ''})
         item['otherfields'] = otherfields
+        if 'csid_s' in listItem.keys():
+            item['csid'] = listItem['csid_s']
         # the list of blob csids need to remain an array, so restore it from psql result
         if 'blob_ss' in listItem.keys():
             item['blobs'] = listItem['blob_ss']
