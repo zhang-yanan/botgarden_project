@@ -11,7 +11,7 @@ from cspace_django_site.main import cspace_django_site
 
 # global variables
 
-from appconfig import MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR
+from appconfig import MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR, TITLE
 from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS, PARMS, FIELDS, LOCATION, EMAILABLEURL
 
 SolrIsUp = True # an initial guess! this is verified below...
@@ -222,6 +222,7 @@ def extractValue(listItem,key):
 
 def setConstants(context):
     if not SolrIsUp: context['errormsg'] = 'Solr is down!'
+    context['title'] = TITLE
     context['imageserver'] = IMAGESERVER
     context['emailableurl'] = EMAILABLEURL
     context['dropdowns'] = FACETS

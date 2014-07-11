@@ -57,7 +57,7 @@
     <!-- Content -->
     <div id="content" {% block coltype %}class="line"{% endblock %}>
         {% block pretitle %}{% endblock %}
-        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+        {% block content_title %}{% endblock %}
         {% block content %}
         {% block object-tools %}{% endblock %}
         {{ content }}

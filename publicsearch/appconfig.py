@@ -83,6 +83,7 @@ SEARCH_QUALIFIERS = config.get('search', 'SEARCH_QUALIFIERS').split(',')
 FIELDDEFINITIONS = config.get('search', 'FIELDDEFINITIONS')
 CSVPREFIX = config.get('search', 'CSVPREFIX')
 CSVEXTENSION = config.get('search', 'CSVEXTENSION')
+TITLE = config.get('search','TITLE')
 
 # get "frontend" configuration from the ... frontend configuaration file FIELDDEFINITIONS
 

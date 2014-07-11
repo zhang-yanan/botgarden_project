@@ -64,6 +64,29 @@ $(document).ready(function () {
         }
     });
 
+    $('[name]').map(function () {
+        var elementID = $(this).attr('name');
+        if (elementID.indexOf('.') == 2) {
+            // console.log(elementID);
+            $(this).autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "../../autosuggest/?",
+                        dataType: "json",
+                        data: {
+                            q: request.term,
+                            elementID: elementID
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2,
+            });
+        }
+    });
+
     var submitForm = function(displaytype) {
         var formData = getFormData('#search');
         formData[displaytype] = '';
