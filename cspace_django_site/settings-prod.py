@@ -136,6 +136,9 @@ INSTALLED_APPS = (
     'hello',
     'ireports',
     'autosuggest',
+    'suggestpostgres',
+    'suggestsolr',
+    'suggest',
     'publicsearch',
     'service',
 )

@@ -12,7 +12,8 @@ from cspace_django_site.main import cspace_django_site
 # global variables
 
 from appconfig import MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR, TITLE
-from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS, PARMS, FIELDS, LOCATION, EMAILABLEURL
+from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS, PARMS, FIELDS
+from appconfig import LOCATION, EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION
 
 SolrIsUp = True # an initial guess! this is verified below...
 FACETS = {}
@@ -222,8 +223,11 @@ def extractValue(listItem,key):
 
 def setConstants(context):
     if not SolrIsUp: context['errormsg'] = 'Solr is down!'
+    context['suggestsource'] = SUGGESTIONS
     context['title'] = TITLE
     context['imageserver'] = IMAGESERVER
+    context['cspaceserver'] = CSPACESERVER
+    context['institution'] = INSTITUTION
     context['emailableurl'] = EMAILABLEURL
     context['dropdowns'] = FACETS
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
@@ -373,11 +377,14 @@ def doSearch(solr_server, solr_core, context):
         item['counter'] = i
         otherfields = []
 
+        # pull out the fields that have special functions in the UI
         for p in PARMS:
             if 'mainentry' in PARMS[p][1]:
                 item['mainentry'] = extractValue(listItem,PARMS[p][3])
             elif 'accession' in PARMS[p][1]:
+                x = PARMS[p]
                 item['accession'] = extractValue(listItem,PARMS[p][3])
+                item['accessionfield'] = PARMS[p][4]
 
         for p in FIELDS[displayFields]:
             try:
@@ -415,8 +422,6 @@ def doSearch(solr_server, solr_core, context):
     #    context['labels'].append(p['label'])
     for p in PARMS:
         m[PARMS[p][3]] = PARMS[p][4]
-    #    if PARMS[p][3] in facetfields:
-    #        context['fields'].append(PARMS[p][0])
 
     context['labels'] = [p['label'] for p in FIELDS[displayFields]]
     context['facets'] = [[m[f], facets[f]] for f in facetfields]

@@ -66,16 +66,18 @@ $(document).ready(function () {
 
     $('[name]').map(function () {
         var elementID = $(this).attr('name');
-        if (elementID.indexOf('.') == 2) {
+        var source = $(this).attr('source');
+        if (source) {
             // console.log(elementID);
             $(this).autocomplete({
                 source: function (request, response) {
                     $.ajax({
-                        url: "../../autosuggest/?",
+                        url: "../../suggest/?",
                         dataType: "json",
                         data: {
                             q: request.term,
-                            elementID: elementID
+                            elementID: elementID,
+                            source: source
                         },
                         success: function (data) {
                             response(data);
@@ -163,6 +165,7 @@ $(document).ready(function () {
         var value = ($(this).text());
 
         if (key != '') {
+            console.log(key + ': ' + value);
             var keyElement = $('#' + key);
             var keyElQual = $('#' + key + '_qualifier');
             if (keyElement != null) {

@@ -31,7 +31,7 @@
                     {% endfor %}
                 </select>
             {% else %}
-                <input type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}"
+                <input type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}" source="{{ suggestsource }}"
                        value="{{ searchValues.field }}"/>
             {% endif %}
             </td>
