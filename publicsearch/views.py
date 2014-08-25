@@ -21,7 +21,7 @@ from appconfig import SOLRSERVER, SOLRCORE, PARMS, FIELDS
 SEARCHRESULTS = {}
 
 
-#@login_required()
+@login_required()
 def publicsearch(request):
     if request.method == 'GET' and request.GET != {}:
         context = {'searchValues': request.GET}
