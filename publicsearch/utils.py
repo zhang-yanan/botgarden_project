@@ -290,12 +290,12 @@ def doSearch(solr_server, solr_core, context):
                      'pixonly', 'locsonly', 'acceptterms']: continue
             if '_qualifier' in p: continue
             if 'select-' in p: continue # skip select control for map markers
-            if not p in requestObject: continue
-            if not requestObject[p]: continue
+            if not requestObject[p]: continue # uh...looks like we can have empty items...let's skip 'em
             if 'item-' in p: continue
             searchTerm = requestObject[p]
             terms = searchTerm.split(' OR ')
             ORs = []
+            querypattern = '%s:%s' # default search expression pattern (dates are different)
             for t in terms:
                 t = t.strip()
                 if t == 'Null':
@@ -322,6 +322,9 @@ def doSearch(solr_server, solr_core, context):
                             t = t.replace('+-', '-') # remove the plus if user entered a minus
                             index = PARMS[p][3].replace('_ss', '_txt')
                             index = index.replace('_s', '_txt')
+                    elif '_dt' in PARMS[p][3]:
+                        querypattern = '%s %s'
+                        index = PARMS[p][3]
                     else:
                         t = t.split(' ')
                         t = ' +'.join(t)
@@ -330,7 +333,7 @@ def doSearch(solr_server, solr_core, context):
                         index = PARMS[p][3]
                 if t == 'OR': t = '"OR"'
                 if t == 'AND': t = '"AND"'
-                ORs.append('%s:%s' % (index, t))
+                ORs.append(querypattern % (index, t))
             searchTerm = ' OR '.join(ORs)
             if ' ' in searchTerm and not '[* TO *]' in searchTerm: searchTerm = ' (' + searchTerm + ') '
             queryterms.append(searchTerm)
