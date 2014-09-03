@@ -178,8 +178,8 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOGS_DIR + os.sep + 'logfile.txt',
-            'maxBytes': 50000,
-            'backupCount': 2,
+            'maxBytes': 10000000,
+            'backupCount': 5,
             'formatter': 'standard',
         },
         'console': {
