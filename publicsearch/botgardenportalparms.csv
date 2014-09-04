@@ -40,4 +40,4 @@ field	30	deadflag	Dead	deadflag_s	x		dropdown	14	8	15	16	9	8	16
 field	30	flowercolor	Flower Color	flowercolor_s	x		keyword	14	8	15	16	9	8	16
 field	31	determinationnoauth	Determination	determinationnoauth_s	x		keyword
 field	32	reasonformove	Reason for Move	reasonformove_s	x		keyword
-field	33	text	Keyword	text	x		keyword	15						
+field	33	text	Keyword	text	x		keyword	15
