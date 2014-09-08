@@ -1,4 +1,8 @@
-.DS_STORE
-.idea/*
 *.pyc
 db.sqlite3
+logs/logfile.txt*
+logs/settings.log
+config/*.cfg
+config/*.csv
+*.DS_Store
+.idea

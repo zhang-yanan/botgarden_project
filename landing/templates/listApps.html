@@ -1,0 +1,29 @@
+{% extends "cspace_django_site/base_site.html" %}
+{% load i18n admin_static %}
+
+{% block content %}
+    <div id="content-main">
+        <h1>{{ title }}</h1>
+        {% if appList %}
+            <table>
+                <tr>
+                    <th scope="row"></th>
+                </tr>
+                {% for app in appList %}
+                    <tr>
+                        <td><a href="./{{ app }}">{{ app }}</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <hr/>
+            <table>
+                <tr>
+                    <td><a target="_new" href="https://{{ hostname }}">CollectionSpace UI ({{ hostname }})</a>
+                    </td>
+                </tr>
+            </table>
+        {% else %}
+            <p>{% trans "No apps" %}</p>
+        {% endif %}
+    </div>
+{% endblock %}

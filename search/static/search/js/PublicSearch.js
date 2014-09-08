@@ -26,6 +26,11 @@ function chooseSlideDirection(targetId) {
 
 
 $(document).ready(function () {
+
+    // $('#searchfields').click(function() {
+    //     chooseSlideDirection('#searchfieldsTarget');
+    // });
+
     $('#about').click(function() {
         chooseSlideDirection('#aboutTarget');
         $('#helpTarget').slideUp();
@@ -109,6 +114,9 @@ $(document).ready(function () {
                 display: "block"
             });
 
+            // chooseSlideDirection('#searchfieldsTarget');
+            // chooseSlideDirection('#searchfields');
+
             $.post("../results/", formData).done(function (data) {
                 $('#resultsPanel').html(data);
                 $('#resultsListing').tablesorter({
@@ -130,6 +138,8 @@ $(document).ready(function () {
                 $('#waitingImage').css({
                     display: "none"
                 });
+
+
             });
         }
     };
@@ -214,4 +224,7 @@ $(document).ready(function () {
     });
 // we need to make sure this gets done in the event the page is created anew (e.g. via a pasted URL)
 $('#tabs').tabs({ active: 0 });
+// nb: this is a newish browser feature. what it does is to clear the GET parms from the URL in the addr bar.
+window.history.pushState({},'foo','.')
 });
+

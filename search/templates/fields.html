@@ -1,4 +1,4 @@
-<table width="100%">
+    <table width="100%">
 
     {% for field in FIELDS.Search %}
         <tr>
@@ -10,8 +10,7 @@
                 <td style="width:100px">
                 <select id="{{ field.name }}_qualifier" name="{{ field.name }}_qualifier">
                     {% for option in qualifiers %}
-                        <option value="{{ option }}"{% if option == searchValues.include_child %}
-                                selected{% endif %}>{{ option }}</option>
+                        <option value="{{ option }}">{{ option }}</option>
                     {% endfor %}
                 </select>
                 </td>

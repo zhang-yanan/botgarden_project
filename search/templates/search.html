@@ -3,28 +3,28 @@
 {% load staticfiles %}
 
 {% block extrastyle %}
-    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/tablesorter.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "search/css/tablesorter.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/PublicSearch.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "search/css/PublicSearch.css" %}"/>
 {% endblock %}
 
 {% block scripts %}
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "publicsearch/js/PublicSearch.js" %}"></script>
-    <script type="text/javascript" src="{% static "publicsearch/js/jquery.tablesorter.js" %}"></script>
+    <script type="text/javascript" src="{% static "search/js/PublicSearch.js" %}"></script>
+    <script type="text/javascript" src="{% static "search/js/jquery.tablesorter.js" %}"></script>
 {% endblock %}
 
 {% block loginBtn %}
 <div id="user-tools">
-    <a href="{% url 'login' %}?next=/botgarden_project/search/publicsearch/" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
+    <a href="{% url 'login' %}?next=/botgarden_project/search/search/" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
 </div>
 {% endblock %}
 
 {% block branding %}
     <h4 class="bannerLeft"></h4>
     <h4 class="bannerRight"></h4>
-    <h1 class="bannerTitle" id="site-name">{% trans ' ' %}</h1>
+    <h1 class="bannerTitle" id="site-name">{% trans apptitle %}</h1>
     <div style="float:right; height: 30px;">
         <a href="#" id="about">About</a>
         <a href="#" id="help">Help</a>
@@ -52,7 +52,8 @@
             {% else %}
                 <form class="searchForm" id="search">
                     {% csrf_token %}
-                    <div>
+                    <!-- h3 id="hidefields" style="display: none">Show Search Parameters</h3 -->
+                    <div id="searchfieldsTarget">
                         {% include "fields.html" %}
                         {% include "buttons.html" %}
                     </div>
@@ -60,7 +61,7 @@
             {% endif %}
         </div>
         <div  id="waitingImage" style="display: none">
-            <img src="{% static "cspace_django_site/images/timer-animated.gif" %}" alt="Searching..."/>
+            <h1><img style="vertical-align: middle" src="{% static "cspace_django_site/images/timer-animated.gif" %}" alt="Searching..."/> Searching...</h1>
        </div>
         <div id="resultsPanel">
             {% if items %}

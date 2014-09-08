@@ -1,8 +1,14 @@
-cspace-django-project
-====================
+botgarden_project
+=================
 
-This is a simple example Django-based webapp that can be configured to connect to an instance of the CollectionSpace services.
+This Django project supports several webapps used by the UC Botanical Garden.
 
-This is essentially an archetype for creating Django projects (websites) that are setup to run CollectionSpace related webapp applications.  It comes configured with two example webapps. The first is named "polls" that derives from the Django tutorial at https://docs.djangoproject.com/en/dev/intro/tutorial01/.  The second example is named "intakes."
+Is is based on the "cspace_django_project" which provide basic authentication of webapps against
+the configured CSpace server (see the documentation for this project on GitHub).
 
-It also comes configured with a "back-end" CollectionSpace authentication provider.  See the README.txt file in the /cspace_django_site/authn directory for instructions on setting it up.
+Some things to note when deploying this project:
+
+* Each webapp has an example configuration file, usually something like "exampleWebappname.cfg" in
+the application's root directory. Each of these needs to be copied to the project config directory
+with the file name expected by the webapp (usually "webapp.cfg" where "webapp" is the
+directory name of the webapp) *AND THEN EDITED* to provide specific deployment-specific parameters.

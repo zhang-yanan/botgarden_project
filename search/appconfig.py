@@ -145,4 +145,4 @@ def loadConfiguration(configFileName):
         print "LOCATION not set, please specify a variable as 'location'"
 
 
-loadConfiguration('publicsearch')
+loadConfiguration('search')

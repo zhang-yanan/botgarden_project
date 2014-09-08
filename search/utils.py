@@ -225,6 +225,7 @@ def setConstants(context):
     if not SolrIsUp: context['errormsg'] = 'Solr is down!'
     context['suggestsource'] = SUGGESTIONS
     context['title'] = TITLE
+    context['apptitle'] = TITLE
     context['imageserver'] = IMAGESERVER
     context['cspaceserver'] = CSPACESERVER
     context['institution'] = INSTITUTION

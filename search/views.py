@@ -14,7 +14,6 @@ from appconfig import CSVPREFIX,CSVEXTENSION
 
 
 # global variables (at least to this module...)
-config = cspace_django_site.getConfig()
 
 from appconfig import SOLRSERVER, SOLRCORE, PARMS, FIELDS
 
@@ -22,7 +21,7 @@ SEARCHRESULTS = {}
 
 
 @login_required()
-def publicsearch(request):
+def search(request):
     if request.method == 'GET' and request.GET != {}:
         context = {'searchValues': request.GET}
         context = doSearch(SOLRSERVER, SOLRCORE, context)
@@ -34,7 +33,7 @@ def publicsearch(request):
 
     context = setConstants(context)
     loginfo('start search', context, request)
-    return render(request, 'publicsearch.html', context)
+    return render(request, 'search.html', context)
 
 
 def retrieveResults(request):
