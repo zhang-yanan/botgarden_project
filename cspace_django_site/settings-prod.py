@@ -135,12 +135,12 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'hello',
     'ireports',
-    'autosuggest',
     'suggestpostgres',
     'suggestsolr',
     'suggest',
     'search',
     'service',
+    'landing'
 )
 
 # A sample logging configuration. The only tangible logging

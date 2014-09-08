@@ -5,7 +5,7 @@
 
 #branding h1 {
     text-indent: 360px;
-    height: 36px; /* The height of the tallest image referenced above in background-image */
+    height: 48px; /* The height of the tallest image referenced above in background-image */
     margin-bottom: 6px;
 }
 
