@@ -8,7 +8,7 @@ LOGS_DIR = BASE_PARENT_DIR + os.sep + 'logs'
 PROJECT_NAME = os.path.basename(BASE_PARENT_DIR)
 
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
