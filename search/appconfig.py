@@ -35,11 +35,15 @@ def parseRows(rows, SUGGESTIONS):
     HEADER = {}
     labels = {}
     FIELDS = {}
+
+    SEARCHCOLUMNS = 0
+    SEARCHROWS = 0
+
     functions = 'Search,Facet,bMapper,listDisplay,fullDisplay,gridDisplay,inCSV'.split(',')
     for function in functions:
         FIELDS[function] = []
 
-    fieldkeys = 'label fieldtype suggestions solrfield name order'.split(' ')
+    fieldkeys = 'label fieldtype suggestions solrfield name X order'.split(' ')
 
     for rowid, row in enumerate(rows):
         rowtype = row[0]
@@ -50,7 +54,7 @@ def parseRows(rows, SUGGESTIONS):
                 labels[r] = i
 
         elif rowtype == 'field':
-            needed = [row[labels[i]] for i in 'Label Role Suggestions SolrField Name'.split(' ')]
+            needed = [row[labels[i]] for i in 'Label Role Suggestions SolrField Name Search'.split(' ')]
             if row[labels['Suggestions']] != '':
                 #suggestname = '%s.%s' % (row[labels['Suggestions']], row[labels['Name']])
                 suggestname = row[labels['Name']]
@@ -64,11 +68,24 @@ def parseRows(rows, SUGGESTIONS):
                 if len(row) > labels[function] and row[labels[function]] != '':
                     fieldhash = {}
                     for n, v in enumerate(needed):
-                        fieldhash[fieldkeys[n]] = v
+                        if n == 5 and function == 'Search': # 5th item in needed is search field x,y coord for layout
+                            if v == '':
+                                continue
+                            searchlayout = (v+',1').split(',')
+                            fieldhash['column'] = int('0'+searchlayout[1])
+                            fieldhash['row'] = int('0'+searchlayout[0])
+                            SEARCHCOLUMNS = max(SEARCHCOLUMNS, int('0'+searchlayout[1]))
+                            SEARCHROWS = max(SEARCHROWS, int('0'+searchlayout[0]))
+                        else:
+                            fieldhash[fieldkeys[n]] = v
                     fieldhash['style'] = 'width:200px' # temporary hack!
+                    fieldhash['type'] = 'text' # temporary hack!
                     FIELDS[function].append(fieldhash)
 
-    return FIELDS, PARMS
+    if SEARCHROWS == 0 : SEARCHROWS = 1
+    if SEARCHCOLUMNS == 0 : SEARCHCOLUMNS = 1
+
+    return FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS
 
 
 def loadConfiguration(configFileName):
@@ -99,6 +116,8 @@ def loadConfiguration(configFileName):
     global DROPDOWNS
     global FIELDS
     global PARMS
+    global SEARCHROWS
+    global SEARCHCOLUMNS
 
     try:
         MAXMARKERS = int(config.get('search', 'MAXMARKERS'))
@@ -122,6 +141,7 @@ def loadConfiguration(configFileName):
         TITLE = config.get('search', 'TITLE')
         SUGGESTIONS = config.get('search', 'SUGGESTIONS')
         LAYOUT = config.get('search', 'LAYOUT')
+
     except:
         print 'error in configuration file %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS)
         print 'this webapp will probably not work'
@@ -130,7 +150,7 @@ def loadConfiguration(configFileName):
 
     print 'reading field definitions from %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS)
 
-    FIELDS, PARMS = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS), SUGGESTIONS)
+    FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS), SUGGESTIONS)
 
     LOCATION = ''
 

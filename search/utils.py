@@ -13,7 +13,7 @@ from cspace_django_site.main import cspace_django_site
 
 from appconfig import MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR, TITLE
 from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS, PARMS, FIELDS
-from appconfig import LOCATION, EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION
+from appconfig import LOCATION, EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION, SEARCHCOLUMNS, SEARCHROWS
 
 SolrIsUp = True # an initial guess! this is verified below...
 FACETS = {}
@@ -230,10 +230,14 @@ def setConstants(context):
     context['cspaceserver'] = CSPACESERVER
     context['institution'] = INSTITUTION
     context['emailableurl'] = EMAILABLEURL
+    context['layout'] = LAYOUT
     context['dropdowns'] = FACETS
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
-    context['qualifiers'] = SEARCH_QUALIFIERS
+    context['qualifiers'] = [ { 'val': s, 'dis': s } for s in SEARCH_QUALIFIERS ]
     context['resultoptions'] = [100, 500, 1000, 2000, 10000]
+
+    context['searchrows'] = range(SEARCHROWS+1)[1:]
+    context['searchcolumns'] = range(SEARCHCOLUMNS+1)[1:]
 
     context['displayTypes'] = (
         ('list', 'List'),
@@ -314,7 +318,8 @@ def doSearch(solr_server, solr_core, context):
                             index = PARMS[p][3].replace('_txt', '_s')
                             t = '"' + t + '"'
                         elif qualifier == 'phrase':
-                            index = PARMS[p][3]
+                            index = PARMS[p][3].replace('_ss', '_txt')
+                            index = index.replace('_s', '_txt')
                             t = '"' + t + '"'
                         elif qualifier == 'keyword':
                             t = t.split(' ')
