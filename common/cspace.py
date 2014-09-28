@@ -81,11 +81,11 @@ def make_get_request(realm, uri, hostname, protocol, port, username, password):
         data = f.read()
         result = (url, data, statusCode)
     except urllib2.HTTPError, e:
-        print 'The server couldn\'t fulfill the request.'
+        print 'The server (%s) couldn\'t fulfill the request.' % server
         print 'Error code: ', e.code
         result = (url, None, e.code)
     except urllib2.URLError, e:
-        print 'We failed to reach a server.'
+        print 'We failed to reach the server (%s).' % server
         print 'Reason: ', e.reason
         result = (url, None, e.reason)
 

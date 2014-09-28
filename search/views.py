@@ -4,7 +4,7 @@ import time, datetime
 from os import path
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, redirect
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 from django import forms
@@ -18,6 +18,10 @@ from appconfig import CSVPREFIX,CSVEXTENSION
 from appconfig import SOLRSERVER, SOLRCORE, PARMS, FIELDS
 
 SEARCHRESULTS = {}
+
+
+def direct(request):
+    return redirect('search/search/')
 
 
 @login_required()

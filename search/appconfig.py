@@ -1,6 +1,6 @@
 # set global variables
 
-from os import path
+from os import path, popen
 from common import cspace # we use the config file reading function
 from cspace_django_site import settings
 import csv
@@ -118,6 +118,7 @@ def loadConfiguration(configFileName):
     global PARMS
     global SEARCHROWS
     global SEARCHCOLUMNS
+    global VERSION
 
     try:
         MAXMARKERS = int(config.get('search', 'MAXMARKERS'))
@@ -142,13 +143,20 @@ def loadConfiguration(configFileName):
         SUGGESTIONS = config.get('search', 'SUGGESTIONS')
         LAYOUT = config.get('search', 'LAYOUT')
 
+        try:
+            VERSION = popen("cd " + settings.BASE_PARENT_DIR + " ; /usr/bin/git describe --always").read().strip()
+            if VERSION == '': # try alternate location for git (this is the usual Mac location)
+                VERSION = popen("/usr/local/bin/git describe --always").read().strip()
+        except:
+            VERSION = 'Unknown'
+
     except:
-        print 'error in configuration file %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS)
-        print 'this webapp will probably not work'
+        print 'error in configuration file %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + configFileName)
+        print 'this webapp will probably not work.'
 
     # get "frontend" configuration from the ... frontend configuaration file FIELDDEFINITIONS
 
-    print 'reading field definitions from %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS)
+    print 'Reading field definitions from %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS)
 
     FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS), SUGGESTIONS)
 
@@ -166,3 +174,4 @@ def loadConfiguration(configFileName):
 
 
 loadConfiguration('search')
+print 'Configuration successfully read'

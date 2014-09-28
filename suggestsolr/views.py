@@ -76,6 +76,6 @@ def solrtransaction(q, elementID):
 def solrrequest(request):
     elementID = request.GET['elementID']
     q = request.GET['q']
-    return HttpResponse(solrtransaction(q,elementID), mimetype='text/json')
+    return HttpResponse(solrtransaction(q,elementID), content_type='text/json')
 
 

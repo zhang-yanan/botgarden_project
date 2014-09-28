@@ -25,6 +25,46 @@ function chooseSlideDirection(targetId) {
 }
 
 
+function clearForm(oForm) {
+
+  var elements = oForm.elements;
+
+  oForm.reset();
+
+  for(i=0; i<elements.length; i++) {
+
+	field_type = elements[i].type.toLowerCase();
+
+	switch(field_type) {
+
+		case "text":
+		case "password":
+		case "textarea":
+	    case "hidden":
+			elements[i].value = "";
+			break;
+
+		case "radio":
+		case "checkbox":
+  			if (elements[i].checked) {
+   				elements[i].checked = false;
+			}
+			break;
+
+        case "select":
+		case "select-one":
+		case "select-multi":
+            		elements[i].selectedIndex = 0;
+			break;
+
+		default:
+			break;
+	}
+    }
+}
+
+
+
 $(document).ready(function () {
 
     // $('#searchfields').click(function() {
@@ -55,7 +95,8 @@ $(document).ready(function () {
     });
 
     $('#search-reset').click(function () {
-        $('#search')[0].reset();
+        clearForm($('#search')[0]);
+        // $('#search')[0].reset();
         $('#resultsPanel').html('');
     });
 
@@ -225,6 +266,6 @@ $(document).ready(function () {
 // we need to make sure this gets done in the event the page is created anew (e.g. via a pasted URL)
 $('#tabs').tabs({ active: 0 });
 // nb: this is a newish browser feature. what it does is to clear the GET parms from the URL in the addr bar.
-window.history.pushState({},'foo','.')
+window.history.replaceState({},'foo','.')
 });
 

@@ -34,6 +34,6 @@ def suggest(request):
             pass
     except:
         pass
-    return HttpResponse(response, mimetype='text/json')
+    return HttpResponse(response, content_type='text/json')
 
 

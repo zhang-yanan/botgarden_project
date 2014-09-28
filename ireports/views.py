@@ -10,8 +10,17 @@ from django import forms
 
 from operator import itemgetter
 
-JRXMLDIRECTORY = '/usr/local/share/django/jrxml/%s'
-# JRXMLDIRECTORY = '../jrxml/%s'
+from common import cspace # we use the config file reading function
+from cspace_django_site import settings
+from cspace_django_site.main import cspace_django_site
+
+mainConfig = cspace_django_site.getConfig()
+
+from os import path
+
+config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'ireports')
+
+JRXMLDIRPATTERN = config.get('connect', 'JRXMLDIRPATTERN')
 # alas, there are many ways the XML parsing functionality might be installed.
 # the following code attempts to find and import the best...
 try:
@@ -34,10 +43,6 @@ except ImportError:
             except ImportError:
                 print("Failed to import ElementTree from any known place")
 
-from common import cspace
-from cspace_django_site.main import cspace_django_site
-
-config = cspace_django_site.getConfig()
 TITLE = 'iReports Available'
 
 @login_required()
@@ -55,7 +60,7 @@ def getReportparameters(filename):
     parms = {}
     csidParms = True
     try:
-        reportXML = parse(JRXMLDIRECTORY % filename)
+        reportXML = parse(JRXMLDIRPATTERN % filename)
         parameters = reportXML.findall('{http://jasperreports.sourceforge.net/jasperreports}parameter')
         #print 'parameters',parameters
         for p in parameters:
@@ -75,8 +80,6 @@ def getReportparameters(filename):
     except:
         #raise
         # indicate that .jrxml file was not found...
-        print JRXMLDIRECTORY
-        print filename
         print 'jrxml file not found, no parms extracted.'
     return parms,csidParms
 
@@ -114,7 +117,7 @@ def fileNamereplace(param, param1):
 
 @login_required()
 def index(request):
-    connection = cspace.connection.create_connection(config, request.user)
+    connection = cspace.connection.create_connection(mainConfig, request.user)
     (url, data, statusCode) = connection.make_get_request('cspace-services/reports')
     reportXML = fromstring(data)
     reportCsids = [csidElement.text for csidElement in reportXML.findall('.//csid')]
@@ -140,7 +143,7 @@ def index(request):
 def ireport(request, report_csid):
 
     # get the report metadata for this report
-    connection = cspace.connection.create_connection(config, request.user)
+    connection = cspace.connection.create_connection(mainConfig, request.user)
     (url, data, statusCode) = connection.make_get_request('cspace-services/reports/%s' % report_csid)
     reportXML = fromstring(data)
     fileName = reportXML.find('.//filename')

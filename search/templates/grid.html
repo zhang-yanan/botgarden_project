@@ -3,7 +3,7 @@
     <div class="grid">
         <div class="tiny" style="padding-bottom: 4px;">
             <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
-            <a href="?maxresults=1&accession={{ item.accession }}&displayType=full">{{ item.accession }}</a>
+            <a href="?maxresults=1&displayType=full&{{ item.accessionfield }}={{ item.accession }}">{{ item.accession }}</a>
         </div>
         {% if item.blobs %}
             <div>

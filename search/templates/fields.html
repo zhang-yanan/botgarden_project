@@ -13,7 +13,7 @@
                             <select id="{{ field.name }}" name="{{ field.name }}">
                                 <option value="">Please select</option>
                                 {% for value in field.dropdowns %}
-                                    <option value="{{ value.0 }}"{% if value.0 == searchValues.dropdown %}
+                                    <option value="{{ value.0 }}"{% if value.0 == fields.value %}
                                             selected{% endif %}>{{ value.0|slice:":40" }} ({{ value.1 }})
                                     </option>
                                 {% endfor %}
@@ -33,7 +33,7 @@
                             </td>
                             <td>
                                 <input type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}"
-                                       source="{{ suggestsource }}" value="{{ searchValues.field }}"/>
+                                       source="{{ suggestsource }}" value="{{ field.value }}"/>
                             </td>
                             {% endif %}
                         {% if 'string' in field.fieldtype or 'date' in field.fieldtype%}
@@ -42,7 +42,7 @@
                             </td>
                             <td>
                                 <input type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}"
-                                       source="{{ suggestsource }}" value="{{ searchValues.field }}"/>
+                                       source="{{ suggestsource }}" value="{{ field.value }}"/>
                             </td>
                         {% endif %}
                         {% if fieldValues.include_child %}

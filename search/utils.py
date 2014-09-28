@@ -14,6 +14,7 @@ from cspace_django_site.main import cspace_django_site
 from appconfig import MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR, TITLE
 from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS, PARMS, FIELDS
 from appconfig import LOCATION, EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION, SEARCHCOLUMNS, SEARCHROWS
+from appconfig import VERSION
 
 SolrIsUp = True # an initial guess! this is verified below...
 FACETS = {}
@@ -133,7 +134,8 @@ def setupGoogleMap(requestObject, context):
     mappableitems = []
     markerlist = []
     for item in context['items']:
-        if item['csid'] in selected:
+        #if item['csid'] in selected:
+        if True:
             m = makeMarker(item['location'])
             if len(mappableitems) >= MAXMARKERS: break
             if m is not None:
@@ -163,7 +165,8 @@ def setupBMapper(requestObject, context):
             selected.append(requestObject[p])
     mappableitems = []
     for item in context['items']:
-        if item['csid'] in selected:
+        #if item['csid'] in selected:
+        if True:
             m = makeMarker(item['location'])
             if m is not None:
                 mappableitems.append(item)
@@ -230,6 +233,7 @@ def setConstants(context):
     context['cspaceserver'] = CSPACESERVER
     context['institution'] = INSTITUTION
     context['emailableurl'] = EMAILABLEURL
+    context['version'] = VERSION
     context['layout'] = LAYOUT
     context['dropdowns'] = FACETS
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
@@ -280,6 +284,12 @@ def doSearch(solr_server, solr_core, context):
     context = setConstants(context)
     requestObject = context['searchValues']
 
+    for searchfield in FIELDS['Search']:
+        if searchfield['name'] in requestObject.keys():
+            searchfield['value'] = requestObject[searchfield['name']]
+        else:
+            searchfield['value'] = ''
+
     # create a connection to a solr server
     s = solr.SolrConnection(url='%s/%s' % (solr_server, solr_core))
     queryterms = []
@@ -292,7 +302,7 @@ def doSearch(solr_server, solr_core, context):
     else:
         for p in requestObject:
             if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane',
-                     'pixonly', 'locsonly', 'acceptterms']: continue
+                     'pixonly', 'locsonly', 'acceptterms', 'submit']: continue
             if '_qualifier' in p: continue
             if 'select-' in p: continue # skip select control for map markers
             if not requestObject[p]: continue # uh...looks like we can have empty items...let's skip 'em
@@ -398,7 +408,6 @@ def doSearch(solr_server, solr_core, context):
         for p in FIELDS[displayFields]:
             try:
                 otherfields.append({'label':p['label'],'name':p['name'],'value': extractValue(listItem,p['solrfield'])})
-
             except:
                 pass
                 #raise
