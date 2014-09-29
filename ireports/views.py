@@ -1,6 +1,6 @@
 __author__ = 'jblowe'
 
-import os
+from os import path, listdir
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, render_to_response
@@ -15,8 +15,6 @@ from cspace_django_site import settings
 from cspace_django_site.main import cspace_django_site
 
 mainConfig = cspace_django_site.getConfig()
-
-from os import path
 
 config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'ireports')
 
@@ -47,7 +45,7 @@ TITLE = 'iReports Available'
 
 @login_required()
 def enumerateReports():
-    files = os.listdir("jrxml")
+    files = listdir("jrxml")
 
     jrxmlfiles = []
     for f in files:
@@ -158,7 +156,7 @@ def ireport(request, report_csid):
             # run the report
             parms = [[p,request.POST[p]] for p in request.POST]
             payload = makePayload(parms)
-            connection = cspace.connection.create_connection(config, request.user)
+            connection = cspace.connection.create_connection(mainConfig, request.user)
             (url, data, csid, elapsedtime) = connection.postxml(uri='cspace-services/reports/%s' % report_csid,
                                                                 requesttype='POST', payload=payload)
             response = HttpResponse(data, content_type='application/pdf')
