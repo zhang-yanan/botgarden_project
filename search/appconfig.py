@@ -11,6 +11,7 @@ def getParms(parmFile, SUGGESTIONS):
         f = open(parmFile, 'rb')
         csvfile = csv.reader(f, delimiter="\t")
     except IOError:
+        raise
         message = 'Expected to be able to read %s, but it was not found or unreadable' % parmFile
         return message, -1
     except:
@@ -20,6 +21,8 @@ def getParms(parmFile, SUGGESTIONS):
         rows = []
         for row, values in enumerate(csvfile):
             rows.append(values)
+
+        f.close()
 
         return parseRows(rows, SUGGESTIONS)
 
@@ -53,6 +56,15 @@ def parseRows(rows, SUGGESTIONS):
                 HEADER[i] = r
                 labels[r] = i
 
+        elif rowtype == 'server':
+            SOLRSERVER = row[1]
+
+        elif rowtype == 'core':
+            SOLRCORE = row[1]
+
+        elif rowtype == 'title':
+            TITLE = row[1]
+
         elif rowtype == 'field':
             needed = [row[labels[i]] for i in 'Label Role Suggestions SolrField Name Search'.split(' ')]
             if row[labels['Suggestions']] != '':
@@ -85,7 +97,7 @@ def parseRows(rows, SUGGESTIONS):
     if SEARCHROWS == 0 : SEARCHROWS = 1
     if SEARCHCOLUMNS == 0 : SEARCHCOLUMNS = 1
 
-    return FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS
+    return FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE
 
 
 def loadConfiguration(configFileName):
@@ -102,22 +114,13 @@ def loadConfiguration(configFileName):
     global BMAPPERSERVER
     global BMAPPERDIR
     global BMAPPERCONFIGFILE
-    global SOLRSERVER
-    global SOLRCORE
     global LOCALDIR
     global SEARCH_QUALIFIERS
     global FIELDDEFINITIONS
     global CSVPREFIX
     global CSVEXTENSION
-    global TITLE
     global SUGGESTIONS
     global LAYOUT
-    global LOCATION
-    global DROPDOWNS
-    global FIELDS
-    global PARMS
-    global SEARCHROWS
-    global SEARCHCOLUMNS
     global VERSION
 
     try:
@@ -132,14 +135,14 @@ def loadConfiguration(configFileName):
         BMAPPERSERVER = config.get('search', 'BMAPPERSERVER')
         BMAPPERDIR = config.get('search', 'BMAPPERDIR')
         BMAPPERCONFIGFILE = config.get('search', 'BMAPPERCONFIGFILE')
-        SOLRSERVER = config.get('search', 'SOLRSERVER')
-        SOLRCORE = config.get('search', 'SOLRCORE')
+        #SOLRSERVER = config.get('search', 'SOLRSERVER')
+        #SOLRCORE = config.get('search', 'SOLRCORE')
         LOCALDIR = config.get('search', 'LOCALDIR')
         SEARCH_QUALIFIERS = config.get('search', 'SEARCH_QUALIFIERS').split(',')
         FIELDDEFINITIONS = config.get('search', 'FIELDDEFINITIONS')
         CSVPREFIX = config.get('search', 'CSVPREFIX')
         CSVEXTENSION = config.get('search', 'CSVEXTENSION')
-        TITLE = config.get('search', 'TITLE')
+        #TITLE = config.get('search', 'TITLE')
         SUGGESTIONS = config.get('search', 'SUGGESTIONS')
         LAYOUT = config.get('search', 'LAYOUT')
 
@@ -154,24 +157,9 @@ def loadConfiguration(configFileName):
         print 'error in configuration file %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + configFileName)
         print 'this webapp will probably not work.'
 
-    # get "frontend" configuration from the ... frontend configuaration file FIELDDEFINITIONS
 
-    print 'Reading field definitions from %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS)
-
-    FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS), SUGGESTIONS)
-
-    LOCATION = ''
-
-    DROPDOWNS = []
-    for p in PARMS:
-        if 'dropdown' in PARMS[p][1]:
-            DROPDOWNS.append(PARMS[p][4])
-        if 'location' in PARMS[p][1]:
-            LOCATION = PARMS[p][3]
-
-    if LOCATION == '':
-        print "LOCATION not set, please specify a variable as 'location'"
 
 
 loadConfiguration('search')
 print 'Configuration successfully read'
+

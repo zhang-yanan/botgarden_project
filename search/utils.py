@@ -5,23 +5,19 @@ import solr
 import cgi
 import logging
 from os import path
+from cspace_django_site import settings
 
 from django.http import HttpResponse, HttpResponseRedirect
 from cspace_django_site.main import cspace_django_site
 
 # global variables
 
-from appconfig import MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR, TITLE
-from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS, PARMS, FIELDS
-from appconfig import LOCATION, EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION, SEARCHCOLUMNS, SEARCHROWS
-from appconfig import VERSION
+from appconfig import MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR
+from appconfig import BMAPPERCONFIGFILE, LOCALDIR, SEARCH_QUALIFIERS
+from appconfig import EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION
+from appconfig import VERSION, FIELDDEFINITIONS, getParms
 
 SolrIsUp = True # an initial guess! this is verified below...
-FACETS = {}
-
-# Get an instance of a logger, log some startup info
-logger = logging.getLogger(__name__)
-logger.info('%s :: %s :: %s' % ('portal startup', '-', '%s | %s | %s' % (SOLRSERVER, IMAGESERVER, BMAPPERSERVER)))
 
 def loginfo(infotype, context, request):
     logdata = ''
@@ -279,7 +275,9 @@ def setConstants(context):
     return context
 
 
-def doSearch(solr_server, solr_core, context):
+def doSearch(context):
+    solr_server = SOLRSERVER
+    solr_core = SOLRCORE
     elapsedtime = time.time()
     context = setConstants(context)
     requestObject = context['searchValues']
@@ -419,7 +417,7 @@ def doSearch(solr_server, solr_core, context):
         if 'blob_ss' in listItem.keys():
             item['blobs'] = listItem['blob_ss']
             imageCount += len(item['blobs'])
-        if LOCATION in  listItem.keys():
+        if LOCATION in listItem.keys():
             item['marker'] = makeMarker(listItem[LOCATION])
             item['location'] = listItem[LOCATION]
         context['items'].append(item)
@@ -463,24 +461,62 @@ def doSearch(solr_server, solr_core, context):
     context['time'] = '%8.3f' % (time.time() - elapsedtime)
     return context
 
-# on startup, do a query to get options values for forms...
-context = {'displayType': 'list', 'maxresults': 0,
-           'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000}}
-context = doSearch(SOLRSERVER, SOLRCORE, context)
+def loadFields(fieldFile):
 
-if 'errormsg' in context:
-    solrIsUp = False
-    print 'Initial solr search failed. Concluding that Solr is down or unreachable... Will not be trying again! Please fix and restart!'
-else:
-    for facet in context['facets']:
-        print 'facet',facet[0],len(facet[1])
-        FACETS[facet[0]] = sorted(facet[1])
-        #if facet[0] in DROPDOWNS:
-        #    FACETS[facet[0]] = sorted(facet[1])
-        # if the facet is not in a dropdown, save the memory for something better
-        #else:
-        #    FACETS[facet[0]] = []
-        # build dropdowns for searching
-        for f in FIELDS['Search']:
-            if f['name'] == facet[0] and f['fieldtype'] == 'dropdown':
-                f['dropdowns'] = facet[1]
+    # get "frontend" configuration from the ... frontend configuration file
+    print 'Reading field definitions from %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile)
+
+    global FIELDS
+    global PARMS
+    global SEARCHCOLUMNS
+    global SEARCHROWS
+    global FACETS
+    global DROPDOWNS
+    global LOCATION
+    global SOLRSERVER
+    global SOLRCORE
+    global TITLE
+
+    LOCATION = ''
+    DROPDOWNS = []
+    FACETS = {}
+
+    FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile), SUGGESTIONS)
+
+    context = {'displayType': 'list', 'maxresults': 0,
+               'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000}}
+
+    context = doSearch(context)
+
+    if 'errormsg' in context:
+        solrIsUp = False
+        print 'Solr facet search failed. Concluding that Solr is down or unreachable... Will not be trying again! Please fix and restart!'
+    else:
+        for facet in context['facets']:
+            print 'facet',facet[0],len(facet[1])
+            FACETS[facet[0]] = sorted(facet[1])
+            #if facet[0] in DROPDOWNS:
+            #    FACETS[facet[0]] = sorted(facet[1])
+            # if the facet is not in a dropdown, save the memory for something better
+            #else:
+            #    FACETS[facet[0]] = []
+            # build dropdowns for searching
+            for f in FIELDS['Search']:
+                if f['name'] == facet[0] and f['fieldtype'] == 'dropdown':
+                    f['dropdowns'] = facet[1]
+
+    for p in PARMS:
+        if 'dropdown' in PARMS[p][1]:
+            DROPDOWNS.append(PARMS[p][4])
+        if 'location' in PARMS[p][1]:
+            LOCATION = PARMS[p][3]
+
+    if LOCATION == '':
+        print "LOCATION not set, please specify a variable as 'location'"
+
+# on startup, do a query to get options values for forms...
+loadFields(FIELDDEFINITIONS)
+
+# Get an instance of a logger, log some startup info
+logger = logging.getLogger(__name__)
+logger.info('%s :: %s :: %s' % ('portal startup', '-', '%s | %s | %s' % (SOLRSERVER, IMAGESERVER, BMAPPERSERVER)))

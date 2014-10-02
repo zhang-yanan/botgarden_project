@@ -15,7 +15,7 @@ from appconfig import CSVPREFIX,CSVEXTENSION
 
 # global variables (at least to this module...)
 
-from appconfig import SOLRSERVER, SOLRCORE, PARMS, FIELDS
+from utils import loadFields
 
 SEARCHRESULTS = {}
 
@@ -28,7 +28,7 @@ def direct(request):
 def search(request):
     if request.method == 'GET' and request.GET != {}:
         context = {'searchValues': request.GET}
-        context = doSearch(SOLRSERVER, SOLRCORE, context)
+        context = doSearch(context)
 
         global SEARCHRESULTS
         SEARCHRESULTS = context
@@ -40,6 +40,7 @@ def search(request):
     return render(request, 'search.html', context)
 
 
+
 def retrieveResults(request):
     if request.method == 'POST' and request.POST != {}:
         requestObject = request.POST
@@ -47,7 +48,7 @@ def retrieveResults(request):
 
         if form.is_valid():
             context = {'searchValues': requestObject}
-            context = doSearch(SOLRSERVER, SOLRCORE, context)
+            context = doSearch(context)
 
             global SEARCHRESULTS
             SEARCHRESULTS = context
@@ -102,3 +103,10 @@ def csv(request):
 
             loginfo('csv', context, request)
             return response
+
+def loadNewFields(request, fieldfile):
+    loadFields(fieldfile + '.csv')
+
+    context = setConstants({})
+    loginfo('loaded fields', context, request)
+    return render(request, 'search.html', context)

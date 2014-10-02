@@ -21,13 +21,16 @@ from django.http import HttpResponse
 from os import path
 from common import cspace # we use the config file reading function
 from cspace_django_site import settings
-from search.appconfig import PARMS
+from search.appconfig import getParms
 
 import solr
 
-config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'suggestsolr')
-SOLRSERVER = config.get('connect', 'SOLRSERVER')
-SOLRCORE = config.get('connect', 'SOLRCORE')
+solrConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'suggestsolr')
+searchConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'search')
+SUGGESTIONS = searchConfig.get('search', 'SUGGESTIONS')
+FIELDDEFINITIONS = searchConfig.get('search', 'FIELDDEFINITIONS')
+
+FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS), SUGGESTIONS)
 
 # create a connection to a solr server
 s = solr.SolrConnection(url='%s/%s' % (SOLRSERVER, SOLRCORE))
