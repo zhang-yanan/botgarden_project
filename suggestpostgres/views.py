@@ -129,6 +129,6 @@ def dbtransaction(q, elementID, connect_string):
 def postgresrequest(request):
     elementID = request.GET['elementID']
     q = request.GET['q']
-    return HttpResponse(dbtransaction(q,elementID,connect_string), mimetype='text/json')
+    return HttpResponse(dbtransaction(q,elementID,connect_string), content_type='text/json')
 
 

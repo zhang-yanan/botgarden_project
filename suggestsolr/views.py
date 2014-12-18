@@ -50,9 +50,20 @@ def solrtransaction(q, elementID):
 
         # do a search
         solrField = PARMS[elementID][3]
-        querystring = '%s:%s*' % (solrField,q)
+        # just distinguishing the 2 functions of this field:
+        # 1. the _s version, suggestfield, is the string field to display
+        # 2. the _txt version, searchfield, is the field to search on (i.e. keywords)
+        suggestfield = solrField
+        searchfield = solrField.replace('_ss','_txt')
+        searchfield = searchfield.replace('_s','_txt')
+        # yes, case is a terrible thing to have to deal with!
+        q2 = q.lower().split(' ')
+        # make every token a left prefix...
+        q3 = [x + '*' for x in q2]
+        querystring = searchfield + ':' + (' AND %s:' % searchfield).join(q3)
+        #querystring = '%s:%s*' % (searchfield,q)
         print querystring
-        response = s.query(querystring, facet='true', facet_field=[ solrField ], fq={},
+        response = s.query(querystring, facet='true', facet_field=[ suggestfield ], fq={},
                            rows=0, facet_limit=30,
                            facet_mincount=1)
 
@@ -64,7 +75,9 @@ def solrtransaction(q, elementID):
             #_v = []
             for k, v in values.items():
                 #_v.append((k, v))
-                result.append({'value': k})
+                missingatoken = filter(lambda x: x not in k.lower(), q2)
+                if not missingatoken:
+                    result.append({'value': k})
             #_facets[key] = sorted(_v, key=lambda (a, b): b, reverse=True)
 
         result.append({'s': solrField})
@@ -72,6 +85,7 @@ def solrtransaction(q, elementID):
         return json.dumps(result)    # or "json.dump(result, sys.stdout)"
 
     except:
+        raise
         sys.stderr.write("suggest solr query error!\n")
         return None
 

@@ -38,6 +38,10 @@ function clearForm(oForm) {
         switch (field_type) {
 
             case "text":
+                if (elements[i].name == "start"){
+                    elements[i].value = 0;
+                    break;
+                }
             case "password":
             case "textarea":
                 elements[i].value = "";
