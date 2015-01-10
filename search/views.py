@@ -17,11 +17,11 @@ from appconfig import CSVPREFIX,CSVEXTENSION
 
 from utils import loadFields
 
-SEARCHRESULTS = {}
+#SEARCHRESULTS = {}
 
 
 def direct(request):
-    return redirect('search/search/')
+    return redirect('search/')
 
 
 @login_required()
@@ -30,8 +30,8 @@ def search(request):
         context = {'searchValues': request.GET}
         context = doSearch(context)
 
-        global SEARCHRESULTS
-        SEARCHRESULTS = context
+        #global SEARCHRESULTS
+        #SEARCHRESULTS = context
     else:
         context = {}
 
@@ -50,8 +50,8 @@ def retrieveResults(request):
             context = {'searchValues': requestObject}
             context = doSearch(context)
 
-            global SEARCHRESULTS
-            SEARCHRESULTS = context
+            #global SEARCHRESULTS
+            #SEARCHRESULTS = context
 
             context = setConstants(context)
 
@@ -65,7 +65,9 @@ def bmapper(request):
         form = forms.Form(requestObject)
 
         if form.is_valid():
-            context = SEARCHRESULTS
+            #context = SEARCHRESULTS
+            context = {'searchValues': requestObject}
+            context = doSearch(context)
             context = setupBMapper(requestObject, context)
 
             loginfo('bmapper', context, request)
@@ -78,7 +80,9 @@ def gmapper(request):
         form = forms.Form(requestObject)
 
         if form.is_valid():
-            context = SEARCHRESULTS
+            #context = SEARCHRESULTS
+            context = {'searchValues': requestObject}
+            context = doSearch(context)
             context = setupGoogleMap(requestObject, context)
 
             loginfo('gmapper', context, request)
@@ -93,7 +97,8 @@ def csv(request):
         if form.is_valid():
             # context = {'searchValues': requestObject}
             # context = doSearch(SOLRSERVER, SOLRCORE, context)
-            context = SEARCHRESULTS
+            #context = SEARCHRESULTS
+            context = {'searchValues': requestObject}
 
             # Create the HttpResponse object with the appropriate CSV header.
             response = HttpResponse(content_type='text/csv')

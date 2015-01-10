@@ -78,9 +78,17 @@ $(document).ready(function () {
         chooseSlideDirection('#aboutTarget');
         $('#helpTarget').slideUp();
         $('#creditsTarget').slideUp();
+        $('#termsTarget').slideUp();
     });
     $('#help').click(function() {
         chooseSlideDirection('#helpTarget');
+        $('#aboutTarget').slideUp();
+        $('#creditsTarget').slideUp();
+        $('#termsTarget').slideUp();
+    });
+    $('#terms').click(function() {
+        chooseSlideDirection('#termsTarget');
+        $('#helpTarget').slideUp();
         $('#aboutTarget').slideUp();
         $('#creditsTarget').slideUp();
     });
@@ -88,6 +96,7 @@ $(document).ready(function () {
         chooseSlideDirection('#creditsTarget');
         $('#helpTarget').slideUp();
         $('#aboutTarget').slideUp();
+        $('#termsTarget').slideUp();
     });
     
     $("#acceptterms").click(function () {
@@ -138,6 +147,17 @@ $(document).ready(function () {
         }
     });
 
+    $.tablesorter.addParser({
+        id: 'sortkey',
+        is: function(s, table, cell, $cell) {
+            return false;
+        },
+       format: function(s, table, cell, cellIndex) {
+            return $(cell)[0].firstElementChild.getAttribute("data-sort");
+        },
+        type: 'text'
+    });
+
     var submitForm = function(displaytype) {
         var formData = getFormData('#search');
         formData[displaytype] = '';
@@ -166,11 +186,12 @@ $(document).ready(function () {
                 $('#resultsListing').tablesorter({
                     headers: {
                         0: {sorter: false},
-                        1: {width: '100px' },
+                        1: {width: '100px', sorter: 'sortkey' },
                         2: {width: '260px' },
                         4: {width: '90px', sorter: 'isoDate' },
                         9: {width: '180px' }
-                    }
+                    },
+                    sortList: [[1, 0]]
                 });
                 $('#tabs').tabs({ active: 0 });
                 ga('send', 'pageview', { 'page': '/search' });
@@ -239,11 +260,12 @@ $(document).ready(function () {
             $('#resultsListing').tablesorter({
                 headers: {
                     0: {sorter: false},
-                    1: {width: '100px' },
+                    1: {width: '100px', sorter: 'sortkey'},
                     2: {width: '260px' },
                     4: {width: '90px', sorter: 'isoDate' },
                     9: {width: '180px' }
-                }
+                },
+                sortList: [[1,0]]
             });
             $('#tabs').tabs({ active: 1 });
             ga('send', 'pageview', { 'page': '/search/refine' });
@@ -252,7 +274,7 @@ $(document).ready(function () {
 
     $(document).on('click', '#map-bmapper, #map-google', function () {
         var formData = getFormData('#selectedItems');
-        // formData[$(this).attr('name')] = '';
+        formData[$(this).attr('name')] = '';
 
         if ($(this).attr('id') == 'map-bmapper') {
             $.post("../bmapper/", formData).done(function (data) {

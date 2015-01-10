@@ -62,6 +62,10 @@ def getfields(fieldset):
     elif fieldset == 'FacetLabels':
         pickField = 'label'
         fieldset = 'Facet'
+    elif fieldset == "bMapper":
+        pickField = 'name'
+    #elif fieldset == "bmapperdata":
+    #    return []
     else:
         pickField = 'solrfield'
 
@@ -97,8 +101,12 @@ def makeMarker(location):
         return None
 
 
-def writeCsv(filehandle, items, writeheader):
-    fieldset = getfields('inCSV')
+def writeCsv(filehandle, items, writeheader, bmapper=False):
+    if bmapper:
+        fieldset = getfields('bMapper')
+    else:
+        fieldset = getfields('inCSV')
+    print "Fieldset: %s" % fieldset
     writer = csv.writer(filehandle, delimiter='\t')
     # write the berkeley mapper header as the header for the csv file, if asked...
     if writeheader:
@@ -106,15 +114,39 @@ def writeCsv(filehandle, items, writeheader):
     for item in items:
         # get the cells from the item dict in the order specified; make empty cells if key is not found.
         row = []
+        if bmapper:
+            r = []
+            r.append(item['accession'])
+            r.append(item['mainentry'])
+            for x in item['otherfields']:
+                if x['name'] not in fieldset:
+                    continue
+                r.append(x['value'])
+            location = item['location'] #How does location differ from marker?
+            l = location.split(', ')
+            r.append(l[0])
+            r.append(l[1])
+            for cell in r:
+                # the following few lines are a hack to handle non-unicode data which appears to be present in the solr datasource
+                if isinstance(cell, unicode):
+                    try:
+                        cell = cell.translate({0xd7: u"x"})
+                        cell = cell.decode('utf-8', 'ignore').encode('utf-8')
+                    except:
+                        print 'unicode problem', cell.encode('utf-8', 'ignore')
+                        cell = u'invalid unicode data'
+                row.append(cell)
+            writer.writerow(row)
+            continue
         for x in item['otherfields']:
+            if x['name'] not in fieldset:
+                continue
             cell = x['value']
             # the following few lines are a hack to handle non-unicode data which appears to be present in the solr datasource
             if isinstance(cell, unicode):
                 try:
                     cell = cell.translate({0xd7: u"x"})
                     cell = cell.decode('utf-8', 'ignore').encode('utf-8')
-                    #cell = cell.decode('utf-8','ignore').encode('utf-8')
-                    #cell = cell.decode('utf-8').encode('utf-8')
                 except:
                     print 'unicode problem', cell.encode('utf-8', 'ignore')
                     cell = u'invalid unicode data'
@@ -132,12 +164,15 @@ def setupGoogleMap(requestObject, context):
     for item in context['items']:
         #if item['csid'] in selected:
         if True:
-            m = makeMarker(item['location'])
-            if len(mappableitems) >= MAXMARKERS: break
-            if m is not None:
-                #print 'm= x%sx' % m
-                markerlist.append(m)
-                mappableitems.append(item)
+            try:
+                m = makeMarker(item['location'])
+                if len(mappableitems) >= MAXMARKERS: break
+                if m is not None:
+                    #print 'm= x%sx' % m
+                    markerlist.append(m)
+                    mappableitems.append(item)
+            except KeyError:
+                pass
     context['mapmsg'] = []
     if len(context['items']) < context['count']:
         context['mapmsg'].append('%s points plotted. %s selected objects examined (of %s in result set).' % (
@@ -163,14 +198,17 @@ def setupBMapper(requestObject, context):
     for item in context['items']:
         #if item['csid'] in selected:
         if True:
-            m = makeMarker(item['location'])
-            if m is not None:
-                mappableitems.append(item)
+            try:
+                m = makeMarker(item['location'])
+                if m is not None:
+                    mappableitems.append(item)
+            except KeyError:
+                pass
     context['mapmsg'] = []
     filename = 'bmapper%s.csv' % datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
     #filehandle = open(filename, 'wb')
     filehandle = open(path.join(LOCALDIR, filename), 'wb')
-    writeCsv(filehandle, mappableitems, writeheader=False)
+    writeCsv(filehandle, mappableitems, writeheader=False, bmapper=True)
     filehandle.close()
     context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (
         len(mappableitems), len(selected), context['count']))
@@ -179,7 +217,7 @@ def setupBMapper(requestObject, context):
     bmapperconfigfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, BMAPPERCONFIGFILE)
     tabfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, filename)
     context[
-        'bmapperurl'] = "http://berkeleymapper.berkeley.edu/run.php?ViewResults=tab&tabfile=%s&configfile=%s&sourcename=Consortium+of+California+Herbaria+result+set&maptype=Terrain" % (
+        'bmapperurl'] = "http://berkeleymapper.berkeley.edu/run.php?ViewResults=tab&tabfile=%s&configfile=%s&sourcename=PAHMA+result+set&maptype=Terrain" % (
         tabfile, bmapperconfigfile)
     return context
     # return HttpResponseRedirect(context['bmapperurl'])
@@ -360,7 +398,7 @@ def doSearch(context):
         if urlterms != []:
             urlterms.append('displayType=%s' % context['displayType'])
             urlterms.append('maxresults=%s' % context['maxresults'])
-            urlterms.append('start=%s' % requestObject['start'])
+            urlterms.append('start=%s' % context['start'])
         url = '&'.join(urlterms)
 
     if 'pixonly' in requestObject:
@@ -409,6 +447,8 @@ def doSearch(context):
                 x = PARMS[p]
                 item['accession'] = extractValue(listItem,PARMS[p][3])
                 item['accessionfield'] = PARMS[p][4]
+            if 'sortkey' in PARMS[p][1]:
+                item['sortkey'] = extractValue(listItem, PARMS[p][3])
 
         for p in FIELDS[displayFields]:
             try:

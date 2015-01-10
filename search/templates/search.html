@@ -24,7 +24,7 @@
 {% block branding %}
     <h4 class="bannerLeft"></h4>
     <h4 class="bannerRight"></h4>
-    <h1 class="bannerTitle" id="site-name">{% trans apptitle %}</h1>
+    <h1 class="bannerTitle" id="site-name">{{ apptitle }}</h1>
     <div style="float:right; height: 30px;">
         <a href="#" id="about">About</a>
         <a href="#" id="help">Help</a>
@@ -44,6 +44,9 @@
             </div>
             <div id="creditsTarget" style="display:none">
                 {% include "credits.html" %}
+            </div>
+            <div id="termsTarget" style="display:none">
+                {% include "terms.html" %}
             </div>
         </div>
         <div class="searchPanel">
