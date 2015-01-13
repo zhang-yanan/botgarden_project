@@ -42,6 +42,9 @@ function clearForm(oForm) {
                     elements[i].value = 0;
                     break;
                 }
+                elements[i].value = "";
+                break;
+
             case "password":
             case "textarea":
                 elements[i].value = "";
@@ -122,6 +125,7 @@ $(document).ready(function () {
         }
     });
 
+
     $('[name]').map(function () {
         var elementID = $(this).attr('name');
         var source = $(this).attr('source');
@@ -183,6 +187,7 @@ $(document).ready(function () {
 
             $.post("../results/", formData).done(function (data) {
                 $('#resultsPanel').html(data);
+                $('.facetTable').tablesorter();
                 $('#resultsListing').tablesorter({
                     headers: {
                         0: {sorter: false},
@@ -292,5 +297,7 @@ $(document).ready(function () {
 $('#tabs').tabs({ active: 0 });
 // nb: this is a newish browser feature -- HTML5. what it does is to clear the GET parms from the URL in the addr bar.
 //window.history.pushState({},'foo','.')
+// on the first load (or a reload) of the page, clear the form...
+clearForm($('#search')[0]);
 });
 

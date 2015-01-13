@@ -30,16 +30,14 @@ searchConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), '
 SUGGESTIONS = searchConfig.get('search', 'SUGGESTIONS')
 FIELDDEFINITIONS = searchConfig.get('search', 'FIELDDEFINITIONS')
 
-FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS), SUGGESTIONS)
+FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS))
 
 # create a connection to a solr server
 s = solr.SolrConnection(url='%s/%s' % (SOLRSERVER, SOLRCORE))
 
 import sys, json, re
 import cgi
-import cgitb;
-
-cgitb.enable()  # for troubleshooting
+import cgitb; cgitb.enable()  # for troubleshooting
 
 
 def solrtransaction(q, elementID):

@@ -6,7 +6,7 @@ from cspace_django_site import settings
 import csv
 
 
-def getParms(parmFile, SUGGESTIONS):
+def getParms(parmFile):
     try:
         f = open(parmFile, 'rb')
         csvfile = csv.reader(f, delimiter="\t")
@@ -24,7 +24,7 @@ def getParms(parmFile, SUGGESTIONS):
 
         f.close()
 
-        return parseRows(rows, SUGGESTIONS)
+        return parseRows(rows)
 
     except IOError:
         message = 'Could not read (or maybe parse) rows from %s' % parmFile
@@ -33,7 +33,7 @@ def getParms(parmFile, SUGGESTIONS):
         raise
 
 
-def parseRows(rows, SUGGESTIONS):
+def parseRows(rows):
     PARMS = {}
     HEADER = {}
     labels = {}

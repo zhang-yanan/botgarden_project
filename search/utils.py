@@ -7,8 +7,8 @@ import logging
 from os import path
 from cspace_django_site import settings
 
-from django.http import HttpResponse, HttpResponseRedirect
-from cspace_django_site.main import cspace_django_site
+#from django.http import HttpResponse, HttpResponseRedirect
+#from cspace_django_site.main import cspace_django_site
 
 # global variables
 
@@ -544,7 +544,7 @@ def loadFields(fieldFile):
     DROPDOWNS = []
     FACETS = {}
 
-    FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile), SUGGESTIONS)
+    FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile))
 
     context = {'displayType': 'list', 'maxresults': 0,
                'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000}}
@@ -557,7 +557,7 @@ def loadFields(fieldFile):
     else:
         for facet in context['facets']:
             print 'facet',facet[0],len(facet[1])
-            FACETS[facet[0]] = sorted(facet[1])
+            FACETS[facet[0]] = sorted(facet[1], key=lambda tup: tup[0])
             #if facet[0] in DROPDOWNS:
             #    FACETS[facet[0]] = sorted(facet[1])
             # if the facet is not in a dropdown, save the memory for something better
@@ -566,7 +566,7 @@ def loadFields(fieldFile):
             # build dropdowns for searching
             for f in FIELDS['Search']:
                 if f['name'] == facet[0] and f['fieldtype'] == 'dropdown':
-                    f['dropdowns'] = facet[1]
+                    f['dropdowns'] = sorted(facet[1], key=lambda tup: tup[0])
 
     for p in PARMS:
         if 'dropdown' in PARMS[p][1]:

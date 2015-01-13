@@ -95,8 +95,6 @@ def csv(request):
         form = forms.Form(requestObject)
 
         if form.is_valid():
-            # context = {'searchValues': requestObject}
-            # context = doSearch(SOLRSERVER, SOLRCORE, context)
             #context = SEARCHRESULTS
             context = {'searchValues': requestObject}
             context = doSearch(context)
