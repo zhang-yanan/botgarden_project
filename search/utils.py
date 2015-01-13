@@ -162,8 +162,8 @@ def setupGoogleMap(requestObject, context):
     mappableitems = []
     markerlist = []
     for item in context['items']:
-        #if item['csid'] in selected:
-        if True:
+        if item['csid'] in selected:
+        #if True:
             try:
                 m = makeMarker(item['location'])
                 if len(mappableitems) >= MAXMARKERS: break
