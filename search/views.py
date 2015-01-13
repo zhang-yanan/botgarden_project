@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 from django import forms
 from cspace_django_site.main import cspace_django_site
-from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, setDisplayType, setConstants, loginfo
+from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, setupCSV, setDisplayType, setConstants, loginfo
 from appconfig import CSVPREFIX,CSVEXTENSION
 
 
@@ -99,13 +99,14 @@ def csv(request):
             # context = doSearch(SOLRSERVER, SOLRCORE, context)
             #context = SEARCHRESULTS
             context = {'searchValues': requestObject}
+            context = doSearch(context)
+            csvitems = setupCSV(requestObject,context)
 
             # Create the HttpResponse object with the appropriate CSV header.
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="%s-%s.%s"' % (CSVPREFIX,datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S"),CSVEXTENSION)
             #response.write(u'\ufeff'.encode('utf8'))
-            writeCsv(response, context['items'], writeheader=True)
-
+            writeCsv(response, csvitems, writeheader=True)
             loginfo('csv', context, request)
             return response
 

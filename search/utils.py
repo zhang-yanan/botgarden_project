@@ -223,6 +223,22 @@ def setupBMapper(requestObject, context):
     # return HttpResponseRedirect(context['bmapperurl'])
 
 
+def setupCSV(requestObject, context):
+    selected = []
+    # check to see if 'select all' is clicked...if so, skip checking individual items
+    if 'select-item' in requestObject:
+        csvitems = context['items']
+    else:
+        for p in requestObject:
+            if 'item-' in p:
+                selected.append(requestObject[p])
+        csvitems = []
+        for item in context['items']:
+            if item['csid'] in selected:
+                csvitems.append(item)
+    return csvitems
+
+
 def setDisplayType(requestObject):
     if 'displayType' in requestObject:
         displayType = requestObject['displayType']
