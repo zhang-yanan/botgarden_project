@@ -37,7 +37,9 @@ s = solr.SolrConnection(url='%s/%s' % (SOLRSERVER, SOLRCORE))
 
 import sys, json, re
 import cgi
-import cgitb; cgitb.enable()  # for troubleshooting
+import cgitb;
+
+cgitb.enable()  # for troubleshooting
 
 
 def solrtransaction(q, elementID):
@@ -52,8 +54,12 @@ def solrtransaction(q, elementID):
         # 1. the _s version, suggestfield, is the string field to display
         # 2. the _txt version, searchfield, is the field to search on (i.e. keywords)
         suggestfield = solrField
-        searchfield = solrField.replace('_ss','_txt')
-        searchfield = searchfield.replace('_s','_txt')
+        # usually we will search using the _txt field, but 'string' and other fields need to use the _s version
+        if 'string' in PARMS[elementID][1] or 'objectno' in PARMS[elementID][1]:
+            searchfield = solrField
+        else:
+            searchfield = solrField.replace('_ss','_txt')
+            searchfield = searchfield.replace('_s','_txt')
         # yes, case is a terrible thing to have to deal with!
         q2 = q.lower().split(' ')
         # make every token a left prefix...
