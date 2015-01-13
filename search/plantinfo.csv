@@ -40,13 +40,14 @@ field	25	gardenlocation	Garden Location	gardenlocation_s	x		keyword	4,2	7	13	11	
 field	26	dataquality	Data Quality	dataquality_s	x		keyword				12				x
 field	27	locality	Geographic Place Name	locality_s	x	pl	keyword	5,2		14	13			14	x
 field	28	csid	CSID	csid_s	x		keyword								x
-field	29	rare	Rare	rare_s	x		dropdown	6,2	8	15	14	8	7	15	x
-field	30	deadflag	Alive	deadflag_s	x		dropdown	10,2	9	16	15	9	8	16	x
+field	29	rare	Rare?	rare_s	x		dropdown	6,2	8	15	14	8	7	15	x
+field	30	deadflag	Dead?	deadflag_s	x		dropdown	10,2	9	16	15	9	8	16	x
 field	30	flowercolor	Flower Color	flowercolor_s	x		keyword	11,2	10	17	16	10	9	17	x
 field	31	determinationnoauth	Determination	determinationnoauth_s	x		keyword				17			18	x
 field	32	reasonformove	Reason for Move	reasonformove_s	x		keyword				18			19	x
-field	33	vouchers	Has Vouchers	vouchers_s	x		dropdown	9,2			19			20	x
-field	34	conserveorg	Conservation Organization	conserveorg_s	x		dropdown	7,2			20			21	x
-field	35	conservecat	Conservation Category	conservecat_s	x		dropdown	8,2			21			22	x
-field	36	voucherlist	Vouchers	voucherlist_ss	x		keyword				22			23	x
-field	37	text	Keyword	text	x		keyword	3,2							x
+field	33	vouchers	Has Vouchers	vouchers_s	x		dropdown	9,2	11		19			20	x
+field	34	conservationinfo	Conservation Information	conservationinfo_ss	x		keyword				20			21	
+field	35	conserveorg	Conservation Organization	conserveorg_ss	x		dropdown	7,2	12						x
+field	36	conservecat	Conservation Category	conservecat_ss	x		dropdown	8,2	13						x
+field	37	voucherlist	Vouchers	voucherlist_ss	x		keyword				21			22	x
+field	38	text	Keyword	text	x		keyword	3,2							x
