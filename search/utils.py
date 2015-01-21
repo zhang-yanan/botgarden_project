@@ -5,6 +5,7 @@ import solr
 import cgi
 import logging
 from os import path
+from copy import deepcopy
 from cspace_django_site import settings
 
 #from django.http import HttpResponse, HttpResponseRedirect
@@ -349,6 +350,7 @@ def doSearch(context):
     s = solr.SolrConnection(url='%s/%s' % (solr_server, solr_core))
     queryterms = []
     urlterms = []
+    #facetfields = getfields(context['facets'])
     facetfields = getfields('Facet')
     if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject:
         querystring = requestObject['querystring']
@@ -546,10 +548,33 @@ def loadFields(fieldFile):
 
     FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile))
 
+    for p in PARMS:
+        if 'dropdown' in PARMS[p][1]:
+            DROPDOWNS.append(PARMS[p][4])
+        if 'location' in PARMS[p][1]:
+            LOCATION = PARMS[p][3]
+
+    if LOCATION == '':
+        print "LOCATION not set, please specify a variable as 'location'"
+
     context = {'displayType': 'list', 'maxresults': 0,
                'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000}}
 
+    # let's fool doSearch into including the dropdown fields in the facet query.
+    # we want them here, but nowhere else...
+    # yes, it's pretty much of a hack, unfortunately
+
+    keepFacets = deepcopy(FIELDS['Facet'])
+    facetNames = [f['name'] for f in FIELDS['Facet']]
+
+    for f in FIELDS['Search']:
+        if 'dropdown' in f['fieldtype'] and not f['name'] in facetNames:
+            FIELDS['Facet'].append(f)
+
     context = doSearch(context)
+
+    # restore actual facet list. Note that we did not touch FIELDS['Search']...
+    FIELDS['Facet'] = deepcopy(keepFacets)
 
     if 'errormsg' in context:
         solrIsUp = False
@@ -565,17 +590,8 @@ def loadFields(fieldFile):
             #    FACETS[facet[0]] = []
             # build dropdowns for searching
             for f in FIELDS['Search']:
-                if f['name'] == facet[0] and f['fieldtype'] == 'dropdown':
+                if f['name'] == facet[0] and 'dropdown' in f['fieldtype']:
                     f['dropdowns'] = sorted(facet[1], key=lambda tup: tup[0])
-
-    for p in PARMS:
-        if 'dropdown' in PARMS[p][1]:
-            DROPDOWNS.append(PARMS[p][4])
-        if 'location' in PARMS[p][1]:
-            LOCATION = PARMS[p][3]
-
-    if LOCATION == '':
-        print "LOCATION not set, please specify a variable as 'location'"
 
 # on startup, do a query to get options values for forms...
 loadFields(FIELDDEFINITIONS)

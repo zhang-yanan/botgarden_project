@@ -45,9 +45,9 @@ field	30	deadflag	Dead?	deadflag_s	x		dropdown	10,2	9	16	15	9	8	16	x
 field	30	flowercolor	Flower Color	flowercolor_s	x		keyword	11,2	10	17	16	10	9	17	x
 field	31	determinationnoauth	Determination	determinationnoauth_s	x		keyword				17			18	x
 field	32	reasonformove	Reason for Move	reasonformove_s	x		keyword				18			19	x
-field	33	vouchers	Has Vouchers	vouchers_s	x		dropdown	9,2	11		19			20	x
+field	33	vouchers	Has Vouchers	vouchers_s	x		dropdown	9,2			19			20	x
 field	34	conservationinfo	Conservation Information	conservationinfo_ss	x		keyword				20			21	
-field	35	conserveorg	Conservation Organization	conserveorg_ss	x		dropdown	7,2	12						x
-field	36	conservecat	Conservation Category	conservecat_ss	x		dropdown	8,2	13						x
+field	35	conserveorg	Conservation Organization	conserveorg_ss	x		dropdown	7,2							x
+field	36	conservecat	Conservation Category	conservecat_ss	x		dropdown	8,2							x
 field	37	voucherlist	Vouchers	voucherlist_ss	x		keyword				21			22	x
 field	38	text	Keyword	text	x		keyword	3,2							x
