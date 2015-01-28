@@ -154,6 +154,7 @@ INSTALLED_APPS = (
     'suggestsolr',
     'suggest',
     'ireports',
+    'imaginator',
     'search'
 )
 

@@ -33,4 +33,5 @@ urlpatterns = patterns('',
                        url(r'^accounts/login/$', views.login, name='login'),
                        url(r'^accounts/logout/$', views.logout_then_login, name='logout'),
                        url(r'^landing', include('landing.urls', namespace='landing')),
+                       url(r'^imaginator', include('imaginator.urls', namespace='imaginator')),
                        )
