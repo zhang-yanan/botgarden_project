@@ -1,7 +1,7 @@
 # set global variables
 
 from os import path, popen
-from common import cspace # we use the config file reading function
+from common import cspace  # we use the config file reading function
 from cspace_django_site import settings
 import csv
 
@@ -68,7 +68,7 @@ def parseRows(rows):
         elif rowtype == 'field':
             needed = [row[labels[i]] for i in 'Label Role Suggestions SolrField Name Search'.split(' ')]
             if row[labels['Suggestions']] != '':
-                #suggestname = '%s.%s' % (row[labels['Suggestions']], row[labels['Name']])
+                # suggestname = '%s.%s' % (row[labels['Suggestions']], row[labels['Name']])
                 suggestname = row[labels['Name']]
             else:
                 suggestname = row[labels['Name']]
@@ -80,22 +80,22 @@ def parseRows(rows):
                 if len(row) > labels[function] and row[labels[function]] != '':
                     fieldhash = {}
                     for n, v in enumerate(needed):
-                        if n == 5 and function == 'Search': # 5th item in needed is search field x,y coord for layout
+                        if n == 5 and function == 'Search':  # 5th item in needed is search field x,y coord for layout
                             if v == '':
                                 continue
-                            searchlayout = (v+',1').split(',')
-                            fieldhash['column'] = int('0'+searchlayout[1])
-                            fieldhash['row'] = int('0'+searchlayout[0])
-                            SEARCHCOLUMNS = max(SEARCHCOLUMNS, int('0'+searchlayout[1]))
-                            SEARCHROWS = max(SEARCHROWS, int('0'+searchlayout[0]))
+                            searchlayout = (v + ',1').split(',')
+                            fieldhash['column'] = int('0' + searchlayout[1])
+                            fieldhash['row'] = int('0' + searchlayout[0])
+                            SEARCHCOLUMNS = max(SEARCHCOLUMNS, int('0' + searchlayout[1]))
+                            SEARCHROWS = max(SEARCHROWS, int('0' + searchlayout[0]))
                         else:
                             fieldhash[fieldkeys[n]] = v
-                    fieldhash['style'] = 'width:200px' # temporary hack!
-                    fieldhash['type'] = 'text' # temporary hack!
+                    fieldhash['style'] = 'width:200px'  # temporary hack!
+                    fieldhash['type'] = 'text'  # temporary hack!
                     FIELDS[function].append(fieldhash)
 
-    if SEARCHROWS == 0 : SEARCHROWS = 1
-    if SEARCHCOLUMNS == 0 : SEARCHCOLUMNS = 1
+    if SEARCHROWS == 0: SEARCHROWS = 1
+    if SEARCHCOLUMNS == 0: SEARCHCOLUMNS = 1
 
     return FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE
 
@@ -135,10 +135,11 @@ def loadConfiguration(configFileName):
         BMAPPERSERVER = config.get('search', 'BMAPPERSERVER')
         BMAPPERDIR = config.get('search', 'BMAPPERDIR')
         BMAPPERCONFIGFILE = config.get('search', 'BMAPPERCONFIGFILE')
-        #SOLRSERVER = config.get('search', 'SOLRSERVER')
+        # SOLRSERVER = config.get('search', 'SOLRSERVER')
         #SOLRCORE = config.get('search', 'SOLRCORE')
         LOCALDIR = config.get('search', 'LOCALDIR')
         SEARCH_QUALIFIERS = config.get('search', 'SEARCH_QUALIFIERS').split(',')
+        SEARCH_QUALIFIERS = [unicode(x) for x in SEARCH_QUALIFIERS]
         FIELDDEFINITIONS = config.get('search', 'FIELDDEFINITIONS')
         CSVPREFIX = config.get('search', 'CSVPREFIX')
         CSVEXTENSION = config.get('search', 'CSVEXTENSION')
@@ -148,7 +149,7 @@ def loadConfiguration(configFileName):
 
         try:
             VERSION = popen("cd " + settings.BASE_PARENT_DIR + " ; /usr/bin/git describe --always").read().strip()
-            if VERSION == '': # try alternate location for git (this is the usual Mac location)
+            if VERSION == '':  # try alternate location for git (this is the usual Mac location)
                 VERSION = popen("/usr/local/bin/git describe --always").read().strip()
         except:
             VERSION = 'Unknown'
@@ -156,8 +157,6 @@ def loadConfiguration(configFileName):
     except:
         print 'error in configuration file %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + configFileName)
         print 'this webapp will probably not work.'
-
-
 
 
 loadConfiguration('search')

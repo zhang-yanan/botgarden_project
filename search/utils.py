@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import re
 import time, datetime
 import csv
@@ -294,6 +295,19 @@ def setConstants(context):
     context['searchrows'] = range(SEARCHROWS+1)[1:]
     context['searchcolumns'] = range(SEARCHCOLUMNS+1)[1:]
 
+    emptyCells = {}
+    for row in context['searchrows']:
+        for col in context['searchcolumns']:
+            empty = True
+            for field in FIELDS['Search']:
+                if field['row'] == row and field['column'] == col:
+                    empty = False
+            if empty:
+                if not row in emptyCells:
+                    emptyCells[row] = {}
+                emptyCells[row][col] = 'X'
+    context['emptycells'] = emptyCells
+
     context['displayTypes'] = (
         ('list', 'List'),
         ('full', 'Full'),
@@ -304,11 +318,20 @@ def setConstants(context):
     try:
         requestObject = context['searchValues']
 
+        # build a list of the search term qualifiers used in this query (for templating...)
+        qualfiersInUse = []
+        for formkey,formvalue in requestObject.items():
+            if '_qualifier' in formkey:
+                qualfiersInUse.append(formkey + ':' + formvalue)
+
+        context['qualfiersInUse'] = qualfiersInUse
+
         context['displayType'] = setDisplayType(requestObject)
         if 'url' in requestObject: context['url'] = requestObject['url']
         if 'querystring' in requestObject: context['querystring'] = requestObject['querystring']
         if 'core' in requestObject: context['core'] = requestObject['core']
         if 'maxresults' in requestObject: context['maxresults'] = int(requestObject['maxresults'])
+        if 'pixonly' in requestObject: context['pixonly'] = requestObject['pixonly']
         if 'start' in requestObject: context['start'] = int(requestObject['start'])
         else: context['start'] = 0
 
@@ -328,7 +351,8 @@ def setConstants(context):
 
 
     context['PARMS'] = PARMS
-    context['FIELDS'] = FIELDS
+    if not 'FIELDS' in context:
+        context['FIELDS'] = FIELDS
 
     return context
 
@@ -340,11 +364,14 @@ def doSearch(context):
     context = setConstants(context)
     requestObject = context['searchValues']
 
-    for searchfield in FIELDS['Search']:
+    formFields = deepcopy(FIELDS)
+    for searchfield in formFields['Search']:
         if searchfield['name'] in requestObject.keys():
             searchfield['value'] = requestObject[searchfield['name']]
         else:
             searchfield['value'] = ''
+
+    context['FIELDS'] = formFields
 
     # create a connection to a solr server
     s = solr.SolrConnection(url='%s/%s' % (solr_server, solr_core))
@@ -396,7 +423,7 @@ def doSearch(context):
                             index = PARMS[p][3].replace('_ss', '_txt')
                             index = index.replace('_s', '_txt')
                     elif '_dt' in PARMS[p][3]:
-                        querypattern = '%s %s'
+                        querypattern = '%s: "%sZ"'
                         index = PARMS[p][3]
                     else:
                         t = t.split(' ')
@@ -411,6 +438,9 @@ def doSearch(context):
             if ' ' in searchTerm and not '[* TO *]' in searchTerm: searchTerm = ' (' + searchTerm + ') '
             queryterms.append(searchTerm)
             urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
+            if p + '_qualifier' in requestObject:
+                # print 'qualifier:',requestObject[p+'_qualifier']
+                urlterms.append('%s=%s' % (p + '_qualifier', cgi.escape(requestObject[p + '_qualifier'])))
         querystring = ' AND '.join(queryterms)
 
         if urlterms != []:
@@ -419,8 +449,8 @@ def doSearch(context):
             urlterms.append('start=%s' % context['start'])
         url = '&'.join(urlterms)
 
-    if 'pixonly' in requestObject:
-        pixonly = requestObject['pixonly']
+    if 'pixonly' in context:
+        pixonly = context['pixonly']
         querystring += " AND %s:[* TO *]" % PARMS['blobs'][3]
         url += '&pixonly=True'
     else:
@@ -446,7 +476,6 @@ def doSearch(context):
         context['errormsg'] = 'Solr4 query failed'
         return context
 
-    facets = getfacets(response)
     results = response.results
 
     context['items'] = []
@@ -504,6 +533,7 @@ def doSearch(context):
     for p in PARMS:
         m[PARMS[p][3]] = PARMS[p][4]
 
+    facets = getfacets(response)
     context['labels'] = [p['label'] for p in FIELDS[displayFields]]
     context['facets'] = [[m[f], facets[f]] for f in facetfields]
     context['fields'] = getfields('FacetLabels')

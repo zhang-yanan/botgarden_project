@@ -298,6 +298,6 @@ $('#tabs').tabs({ active: 0 });
 // nb: this is a newish browser feature -- HTML5. what it does is to clear the GET parms from the URL in the addr bar.
 //window.history.pushState({},'foo','.')
 // on the first load (or a reload) of the page, clear the form...
-clearForm($('#search')[0]);
+//clearForm($('#search')[0]);
 });
 
