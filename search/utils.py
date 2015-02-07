@@ -98,7 +98,11 @@ def parseTerm(queryterm):
 
 def makeMarker(location):
     if location:
-        return location.replace(' ','')
+        location = location.replace(' ','')
+        latitude,longitude = location.split(',')
+        latitude = float(latitude)
+        longitude = float(longitude)
+        return "%0.2f,%0.2f" % (latitude,longitude)
     else:
         return None
 
@@ -124,8 +128,8 @@ def writeCsv(filehandle, items, writeheader, bmapper=False):
                 if x['name'] not in fieldset:
                     continue
                 r.append(x['value'])
-            location = item['location'] #How does location differ from marker?
-            l = location.split(', ')
+            location = item['location']
+            l = location.split(',')
             r.append(l[0])
             r.append(l[1])
             for cell in r:
@@ -157,22 +161,28 @@ def writeCsv(filehandle, items, writeheader, bmapper=False):
 
 
 def setupGoogleMap(requestObject, context):
+
+    context['maxresults'] = 200 # google static api can't handle any more than this anyway...
+    context = doSearch(context)
     selected = []
     for p in requestObject:
         if 'item-' in p:
             selected.append(requestObject[p])
     mappableitems = []
     markerlist = []
+    markerlength = 200
     for item in context['items']:
         if item['csid'] in selected:
         #if True:
             try:
                 m = makeMarker(item['location'])
-                if len(mappableitems) >= MAXMARKERS: break
+                if markerlength > 2048: break
+                #if len(mappableitems) >= MAXMARKERS: break
                 if m is not None:
                     #print 'm= x%sx' % m
                     markerlist.append(m)
                     mappableitems.append(item)
+                    markerlength += len(m) + 8 # 8 is the length of '&markers='
             except KeyError:
                 pass
     context['mapmsg'] = []
@@ -183,10 +193,13 @@ def setupGoogleMap(requestObject, context):
         context['mapmsg'].append(
             '%s points plotted. all %s selected objects in result set examined.' % (len(markerlist), len(selected)))
     context['items'] = mappableitems
-    context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
-    if len(markerlist) >= MAXMARKERS:
-        context['mapmsg'].append(
-            '%s points is the limit. Only first %s accessions (with latlongs) plotted!' % (MAXMARKERS, len(markerlist)))
+    context['markerlist'] = '&markers='.join(markerlist)
+    #context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
+
+    #if len(markerlist) >= MAXMARKERS:
+    #    context['mapmsg'].append(
+    #        '%s points is the limit. Only first %s accessions (with latlongs) plotted!' % (MAXMARKERS, len(markerlist)))
+
     return context
 
 
@@ -196,6 +209,8 @@ def setupBMapper(requestObject, context):
     for p in requestObject:
         if 'item-' in p:
             selected.append(requestObject[p])
+    context['maxresults'] = min(len(selected), MAXRESULTS)
+    context = doSearch(context)
     mappableitems = []
     for item in context['items']:
         #if item['csid'] in selected:
@@ -226,6 +241,7 @@ def setupBMapper(requestObject, context):
 
 
 def setupCSV(requestObject, context):
+    context = doSearch(context)
     selected = []
     # check to see if 'select all' is clicked...if so, skip checking individual items
     if 'select-item' in requestObject:
@@ -330,15 +346,10 @@ def setConstants(context):
         if 'url' in requestObject: context['url'] = requestObject['url']
         if 'querystring' in requestObject: context['querystring'] = requestObject['querystring']
         if 'core' in requestObject: context['core'] = requestObject['core']
-        if 'maxresults' in requestObject: context['maxresults'] = int(requestObject['maxresults'])
         if 'pixonly' in requestObject: context['pixonly'] = requestObject['pixonly']
-        if 'start' in requestObject: context['start'] = int(requestObject['start'])
-        else: context['start'] = 0
-
-        if 'maxfacets' in requestObject:
-            context['maxfacets'] = int(requestObject['maxfacets'])
-        else:
-            context['maxfacets'] = MAXFACETS
+        if 'maxresults' in requestObject: context['maxresults'] = int(requestObject['maxresults'])
+        context['start'] = int(requestObject['start']) if 'start' in requestObject else 1
+        context['maxfacets'] = int(requestObject['maxfacets']) if 'maxfacets' in requestObject else MAXFACETS
 
     except:
         print "no searchValues set"
@@ -346,8 +357,10 @@ def setConstants(context):
         context['url'] = ''
         context['querystring'] = ''
         context['core'] = SOLRCORE
-        context['maxresults'] = MAXRESULTS
-        context['start'] = 0
+        context['maxresults'] = 0
+        context['start'] = 1
+
+    if context['start'] < 1: context['start'] = 1
 
 
     context['PARMS'] = PARMS
@@ -382,7 +395,6 @@ def doSearch(context):
     if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject:
         querystring = requestObject['querystring']
         url = requestObject['url']
-        context['maxresults'] = MAXRESULTS
     else:
         for p in requestObject:
             if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane',
@@ -466,10 +478,15 @@ def doSearch(context):
 
     print querystring
     try:
+        startpage = context['maxresults'] * (context['start'] - 1)
+    except:
+        startpage = 0
+        context['start'] = 1
+    try:
         response = s.query(querystring, facet='true', facet_field=facetfields, fq={},
-                           rows=context['maxresults'], facet_limit=MAXFACETS,
-                           facet_mincount=1, start=context['start'])
-        print 'solr search succeeded, %s results' % response.numFound
+                           rows=context['maxresults'], facet_limit=MAXFACETS, sort='objsortnum_s',
+                           facet_mincount=1, start=startpage)
+        print 'solr search succeeded, %s results, %s rows requested' % (response.numFound, context['maxresults'])
     except:
         #raise
         print 'solr search failed: %s' % ''

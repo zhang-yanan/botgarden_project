@@ -14,8 +14,11 @@
             <br/>
             <input type="checkbox" {% if pixonly %}checked {% endif %} name='locsonly' value="locsonly"> Include only items with latlongs.
         </div>
-        <div style="float:right">
-            Start: &nbsp; <input type="text" name="start" size="5" value="0">&nbsp; &nbsp;
+        <div style="float:right; text-align: center; padding-right: 5px;">
+            page<br/>
+            <a href="#" id="prev">&lt;</a>&nbsp;
+            <input style="text-align: center;" type="text" min="1" name="start" id="start" size="3" value="{{ start }}">
+            <a href="#" id="next">&gt;</a>&nbsp;
         </div>
         <div style="float:right">
             Display options: &nbsp; &nbsp;

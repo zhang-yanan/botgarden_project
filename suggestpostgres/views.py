@@ -39,7 +39,7 @@ def makeTemplate(table,term,expression):
             WHERE %s %s ORDER BY %s LIMIT 30;""" % (term,table,term,expression,term)
 
 def dbtransaction(q, elementID, connect_string):
-    postgresdb = pgdb.connect(connect_string)
+    postgresdb = pgdb.connect(database=connect_string)
     cursor = postgresdb.cursor()
 
     # elementID is of the form xx.csid, where xx is a 2-letter code and csid is the csid of the record

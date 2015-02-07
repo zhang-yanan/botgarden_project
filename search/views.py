@@ -10,7 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django import forms
 from cspace_django_site.main import cspace_django_site
 from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, setupCSV, setDisplayType, setConstants, loginfo
-from appconfig import CSVPREFIX, CSVEXTENSION
+from appconfig import CSVPREFIX, CSVEXTENSION, MAXRESULTS
 
 
 # global variables (at least to this module...)
@@ -59,7 +59,6 @@ def bmapper(request):
 
         if form.is_valid():
             context = {'searchValues': requestObject}
-            context = doSearch(context)
             context = setupBMapper(requestObject, context)
 
             loginfo('bmapper', context, request)
@@ -73,7 +72,6 @@ def gmapper(request):
 
         if form.is_valid():
             context = {'searchValues': requestObject}
-            context = doSearch(context)
             context = setupGoogleMap(requestObject, context)
 
             loginfo('gmapper', context, request)
@@ -87,7 +85,6 @@ def csv(request):
 
         if form.is_valid():
             context = {'searchValues': requestObject}
-            context = doSearch(context)
             csvitems = setupCSV(requestObject, context)
 
             # Create the HttpResponse object with the appropriate CSV header.

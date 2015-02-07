@@ -77,6 +77,20 @@ $(document).ready(function () {
     //     chooseSlideDirection('#searchfieldsTarget');
     // });
 
+
+    $('#next').click(function() {
+        var $n = $("#start");
+        $n.val( Number($n.val())+1 );
+        submitForm('search-list');
+    });
+
+    $('#prev').click(function() {
+        var $n = $("#start");
+        $n.val( Number($n.val())-1 );
+        submitForm('search-list');
+    });
+
+
     $('#about').click(function() {
         chooseSlideDirection('#aboutTarget');
         $('#helpTarget').slideUp();
@@ -243,6 +257,9 @@ $(document).ready(function () {
     $(document).on('click', '.facet-item', function () {
         var key = ($(this).attr('data-facetType'));
         var value = ($(this).text());
+
+        // reset page number to 1 -- this is a new search!
+        $("#start").val( 1 );
 
         if (key != '') {
             console.log(key + ': ' + value);

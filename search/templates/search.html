@@ -55,7 +55,6 @@
             {% else %}
                 <form class="searchForm" id="search">
                     {% csrf_token %}
-                    <!-- h3 id="hidefields" style="display: none">Show Search Parameters</h3 -->
                     <div id="searchfieldsTarget">
                         {% include "fields.html" %}
                         {% include "buttons.html" %}
