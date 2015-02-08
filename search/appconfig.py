@@ -38,6 +38,7 @@ def parseRows(rows):
     HEADER = {}
     labels = {}
     FIELDS = {}
+    DEFAULTSORTKEY = 'None'
 
     SEARCHCOLUMNS = 0
     SEARCHROWS = 0
@@ -75,6 +76,8 @@ def parseRows(rows):
             needed[4] = suggestname
             PARMS[suggestname] = needed
             needed.append(rowid)
+            if 'sortkey' in row[labels['Role']]:
+                DEFAULTSORTKEY = row[labels['SolrField']]
 
             for function in functions:
                 if len(row) > labels[function] and row[labels[function]] != '':
@@ -97,7 +100,7 @@ def parseRows(rows):
     if SEARCHROWS == 0: SEARCHROWS = 1
     if SEARCHCOLUMNS == 0: SEARCHCOLUMNS = 1
 
-    return FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE
+    return FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY
 
 
 def loadConfiguration(configFileName):

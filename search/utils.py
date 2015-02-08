@@ -160,9 +160,32 @@ def writeCsv(filehandle, items, writeheader, bmapper=False):
         writer.writerow(row)
 
 
-def setupGoogleMap(requestObject, context):
+def getMapPoints(context,requestObject):
+    mappableitems = []
+    if 'select-item' in requestObject:
+        mapitems = context['items']
+        numSelected = len(mapitems)
+    else:
+        selected = []
+        for p in requestObject:
+            if 'item-' in p:
+                selected.append(requestObject[p])
+        numSelected = len(selected)
+        mapitems = []
+        for item in context['items']:
+            if item['csid'] in selected:
+                mapitems.append(item)
+    for item in mapitems:
+        try:
+            m = makeMarker(item['location'])
+            if m is not None:
+                mappableitems.append(item)
+        except KeyError:
+            pass
+    return mappableitems, numSelected
 
-    context['maxresults'] = 200 # google static api can't handle any more than this anyway...
+
+def setupGoogleMap(requestObject, context):
     context = doSearch(context)
     selected = []
     for p in requestObject:
@@ -205,22 +228,8 @@ def setupGoogleMap(requestObject, context):
 
 def setupBMapper(requestObject, context):
     context['berkeleymapper'] = 'set'
-    selected = []
-    for p in requestObject:
-        if 'item-' in p:
-            selected.append(requestObject[p])
-    context['maxresults'] = min(len(selected), MAXRESULTS)
     context = doSearch(context)
-    mappableitems = []
-    for item in context['items']:
-        #if item['csid'] in selected:
-        if True:
-            try:
-                m = makeMarker(item['location'])
-                if m is not None:
-                    mappableitems.append(item)
-            except KeyError:
-                pass
+    mappableitems, numSelected = getMapPoints(context, requestObject)
     context['mapmsg'] = []
     filename = 'bmapper%s.csv' % datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
     #filehandle = open(filename, 'wb')
@@ -228,7 +237,7 @@ def setupBMapper(requestObject, context):
     writeCsv(filehandle, mappableitems, writeheader=False, bmapper=True)
     filehandle.close()
     context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (
-        len(mappableitems), len(selected), context['count']))
+        len(mappableitems), numSelected, context['count']))
     #context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
     context['items'] = mappableitems
     bmapperconfigfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, BMAPPERCONFIGFILE)
@@ -350,7 +359,7 @@ def setConstants(context):
         if 'maxresults' in requestObject: context['maxresults'] = int(requestObject['maxresults'])
         context['start'] = int(requestObject['start']) if 'start' in requestObject else 1
         context['maxfacets'] = int(requestObject['maxfacets']) if 'maxfacets' in requestObject else MAXFACETS
-
+        context['sortkey'] = requestObject['sortkey'] if 'sortkey' in requestObject else DEFAULTSORTKEY
     except:
         print "no searchValues set"
         context['displayType'] = setDisplayType({})
@@ -359,6 +368,7 @@ def setConstants(context):
         context['core'] = SOLRCORE
         context['maxresults'] = 0
         context['start'] = 1
+        context['sortkey'] = DEFAULTSORTKEY
 
     if context['start'] < 1: context['start'] = 1
 
@@ -395,10 +405,14 @@ def doSearch(context):
     if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject:
         querystring = requestObject['querystring']
         url = requestObject['url']
+        # Did the user request the full set?
+        if 'select-item' in requestObject:
+            context['maxresults'] = min(requestObject['count'], MAXRESULTS)
+            context['start'] = 1
     else:
         for p in requestObject:
             if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane',
-                     'pixonly', 'locsonly', 'acceptterms', 'submit', 'start']: continue
+                     'pixonly', 'locsonly', 'acceptterms', 'submit', 'start', 'sortkey']: continue
             if '_qualifier' in p: continue
             if 'select-' in p: continue # skip select control for map markers
             if not requestObject[p]: continue # uh...looks like we can have empty items...let's skip 'em
@@ -476,7 +490,7 @@ def doSearch(context):
         locsonly = None
 
 
-    print querystring
+    print 'Solr query: %s' % querystring
     try:
         startpage = context['maxresults'] * (context['start'] - 1)
     except:
@@ -484,12 +498,13 @@ def doSearch(context):
         context['start'] = 1
     try:
         response = s.query(querystring, facet='true', facet_field=facetfields, fq={},
-                           rows=context['maxresults'], facet_limit=MAXFACETS, sort='objsortnum_s',
+                           rows=context['maxresults'], facet_limit=MAXFACETS, sort=context['sortkey'],
                            facet_mincount=1, start=startpage)
-        print 'solr search succeeded, %s results, %s rows requested' % (response.numFound, context['maxresults'])
-    except:
+        print 'Solr search succeeded, %s results, %s rows requested starting at %s' % (response.numFound, context['maxresults'], startpage)
+    #except:
+    except Exception as inst:
         #raise
-        print 'solr search failed: %s' % ''
+        print 'Solr search failed: %s' % str(inst)
         context['errormsg'] = 'Solr4 query failed'
         return context
 
@@ -588,12 +603,13 @@ def loadFields(fieldFile):
     global SOLRSERVER
     global SOLRCORE
     global TITLE
+    global DEFAULTSORTKEY
 
     LOCATION = ''
     DROPDOWNS = []
     FACETS = {}
 
-    FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile))
+    FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile))
 
     for p in PARMS:
         if 'dropdown' in PARMS[p][1]:
@@ -604,7 +620,7 @@ def loadFields(fieldFile):
     if LOCATION == '':
         print "LOCATION not set, please specify a variable as 'location'"
 
-    context = {'displayType': 'list', 'maxresults': 0,
+    context = {'displayType': 'list', 'maxresults': 0, 'sortkey': '',
                'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000}}
 
     # let's fool doSearch into including the dropdown fields in the facet query.

@@ -4,6 +4,9 @@
 {% endif %}
 <form method="post" class="searchForm" id="selectedItems" action="../csv/">
     {% csrf_token %}
+    <input type="hidden" name="count" value="{{ count }}"/>
+    <input type="hidden" name="start" value="{{ start }}"/>
+    <input type="hidden" name="maxresults" value="{{ maxresults }}"/>
     {% if count > 0 %}
         <div id="tabs">
             <ul>

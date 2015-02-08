@@ -39,7 +39,7 @@ function clearForm(oForm) {
 
             case "text":
                 if (elements[i].name == "start"){
-                    elements[i].value = 0;
+                    elements[i].value = 1;
                     break;
                 }
                 elements[i].value = "";
@@ -125,7 +125,6 @@ $(document).ready(function () {
 
     $('#search-reset').click(function () {
         clearForm($('#search')[0]);
-        // $('#search')[0].reset();
         $('#resultsPanel').html('');
     });
 
@@ -234,6 +233,10 @@ $(document).ready(function () {
         } else {
             $('#selectedItems input:checkbox').prop('checked', false);
         }
+    });
+
+    $(document).on('click', '.sel-item', function () {
+        $('#select-items').prop('checked', false);
     });
 
     $(document).on('click', '.map-item', function () {
