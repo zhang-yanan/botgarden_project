@@ -556,19 +556,15 @@ def doSearch(context):
 
     # I think this hack works for most values... but really it should be done properly someday... ;-)
     numberOfPages = 1 + int(response._numFound / (context['maxresults'] + 0.001))
+    context['lastpage'] = numberOfPages
     context['pagesummary'] = 'Page %s of %s [items %s to %s]. ' % (
         context['start'], numberOfPages, startpage + 1,
         min(context['start'] * context['maxresults'], response._numFound))
 
 
-    #print 'items',len(context['items'])
     context['count'] = response._numFound
-    context['labels'] = []
-    context['fields'] = []
 
     m = {}
-    #for p in FIELDS[displayFields]:
-    #    context['labels'].append(p['label'])
     for p in PARMS:
         m[PARMS[p][3]] = PARMS[p][4]
 

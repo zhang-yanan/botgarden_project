@@ -69,7 +69,18 @@ function clearForm(oForm) {
     }
 }
 
-
+function checkPage(Page,increment) {
+    if (!$.isNumeric(Page)) {
+        return false;
+    }
+    var pageNumber = Number(Page);
+    if (pageNumber + increment  >= 1 && pageNumber + increment <= Number($("#lastpage").val())) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 
 $(document).ready(function () {
 
@@ -80,14 +91,18 @@ $(document).ready(function () {
 
     $('#next').click(function() {
         var $n = $("#start");
-        $n.val( Number($n.val())+1 );
-        submitForm('search-list');
+        if (checkPage($n.val(),1)) {
+            $n.val(Number($n.val()) + 1);
+            submitForm('search-list');
+        }
     });
 
     $('#prev').click(function() {
         var $n = $("#start");
-        $n.val( Number($n.val())-1 );
-        submitForm('search-list');
+        if (checkPage($n.val(),-1)) {
+            $n.val(Number($n.val()) - 1);
+            submitForm('search-list');
+        }
     });
 
 
@@ -166,11 +181,13 @@ $(document).ready(function () {
 
     $.tablesorter.addParser({
         id: 'sortkey',
-        is: function(s, table, cell, $cell) {
+        is: function(s, table, cell) {
             return false;
         },
        format: function(s, table, cell, cellIndex) {
-            return $(cell)[0].firstElementChild.getAttribute("data-sort");
+           var $cell = $(cell);
+           return $cell.attr('data-sort') || s;
+           //return $(cell)[0].firstElementChild.getAttribute("data-sort");
         },
         type: 'text'
     });
@@ -200,29 +217,29 @@ $(document).ready(function () {
 
             $.post("../results/", formData).done(function (data) {
                 $('#resultsPanel').html(data);
-                $('.facetTable').tablesorter();
-                $('#resultsListing').tablesorter({
-                    headers: {
-                        0: {sorter: false},
-                        1: {width: '100px', sorter: 'sortkey' },
-                        2: {width: '260px' },
-                        4: {width: '90px', sorter: 'isoDate' },
-                        9: {width: '180px' }
-                    },
-                    sortList: [[1, 0]]
-                });
-                $('#tabs').tabs({ active: 0 });
-                ga('send', 'pageview', { 'page': '/search' });
 
-                $('#resultsPanel').css({
-                    display: "block"
+                $('#resultsListing').tablesorter({
+                    theme: 'blue',
+                    headers: {
+                        1: { sorter:'sortkey' }
+                    }
                 });
+
+                $('[id^=Facet]').map(function () {
+                   $(this).tablesorter({theme: 'blue'});
+                });
+
+                $('#tabs').tabs({ active: 0 });
 
                 $('#waitingImage').css({
                     display: "none"
                 });
 
+                $('#resultsPanel').css({
+                    display: "block"
+                });
 
+                ga('send', 'pageview', { 'page': '/search' });
             });
         }
     };
@@ -282,19 +299,22 @@ $(document).ready(function () {
 
         $.post("../results/", formData).done(function (data) {
             $('#resultsPanel').html(data);
+
             $('#resultsListing').tablesorter({
+                theme: 'blue',
                 headers: {
-                    0: {sorter: false},
-                    1: {width: '100px', sorter: 'sortkey'},
-                    2: {width: '260px' },
-                    4: {width: '90px', sorter: 'isoDate' },
-                    9: {width: '180px' }
-                },
-                sortList: [[1,0]]
+                    1: { sorter:'sortkey' }
+                }
             });
+
+            $('[id^=Facet]').map(function () {
+               $(this).tablesorter({theme: 'blue'});
+            });
+
             $('#tabs').tabs({ active: 1 });
             ga('send', 'pageview', { 'page': '/search/refine' });
         });
+
     });
 
     $(document).on('click', '#map-bmapper, #map-google', function () {

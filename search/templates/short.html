@@ -1,5 +1,5 @@
 {% spaceless %}
-<table cellspace="1" id="resultsListing" class="tablesorter">
+<table cellspace="1" id="resultsListing" class="tablesorter-blue">
     <thead>
     <tr>
         <th></th>
@@ -19,7 +19,6 @@
                     <td><a class="facet-item" data-facetType="{{ i.name }}">{{ i.value }}</a></td>
                 {% endif %}
             {% endfor %}
-            <!-- td><a title="{{ item.earlycollectiondate }}" class="facet-item" data-facetType="collectiondate">{{ item.collectiondate }}</a></td -->
         </tr>
     {% endfor %}
     </tbody>
