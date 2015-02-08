@@ -4,6 +4,7 @@
         {% if count > 0 %}
             {{ count }} items found.
             {% if recordlimit %}{{ recordlimit }}{% endif %}
+            {% if pagesummary %}{{ pagesummary }}{% endif %}
         {% else %}no items found.
         {% endif %}
         {% if url %}

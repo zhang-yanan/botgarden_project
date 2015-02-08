@@ -548,11 +548,18 @@ def doSearch(context):
             item['location'] = listItem[LOCATION]
         context['items'].append(item)
 
-    if context['displayType'] in ['full', 'grid'] and response._numFound > MAXLONGRESULTS:
-        context['recordlimit'] = '(limited to %s for long display)' % MAXLONGRESULTS
-        context['items'] = context['items'][:MAXLONGRESULTS]
-    if context['displayType'] == 'list' and response._numFound > context['maxresults']:
+    #if context['displayType'] in ['full', 'grid'] and response._numFound > MAXRESULTS:
+    #    context['recordlimit'] = '(limited to %s for long display)' % MAXRESULTS
+    #    context['items'] = context['items'][:MAXLONGRESULTS]
+    if context['displayType'] in ['full', 'grid', 'list'] and response._numFound > context['maxresults']:
         context['recordlimit'] = '(display limited to %s)' % context['maxresults']
+
+    # I think this hack works for most values... but really it should be done properly someday... ;-)
+    numberOfPages = 1 + int(response._numFound / (context['maxresults'] + 0.001))
+    context['pagesummary'] = 'Page %s of %s [items %s to %s]. ' % (
+        context['start'], numberOfPages, startpage + 1,
+        min(context['start'] * context['maxresults'], response._numFound))
+
 
     #print 'items',len(context['items'])
     context['count'] = response._numFound
