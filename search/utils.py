@@ -122,8 +122,6 @@ def writeCsv(filehandle, items, writeheader, bmapper=False):
         row = []
         if bmapper:
             r = []
-            r.append(item['accession'])
-            r.append(item['mainentry'])
             for x in item['otherfields']:
                 if x['name'] not in fieldset:
                     continue
@@ -512,7 +510,10 @@ def doSearch(context):
 
     context['items'] = []
     imageCount = 0
-    displayFields = context['displayType'] + 'Display'
+    if 'berkeleymapper' in context:
+        displayFields = 'bMapper'
+    else:
+        displayFields = context['displayType'] + 'Display'
     for i, listItem in enumerate(results):
         item = {}
         item['counter'] = i

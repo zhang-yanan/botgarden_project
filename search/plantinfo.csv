@@ -29,7 +29,7 @@ field	14	minelevation	Min elevation	minelevation_s	x		keyword								x
 field	15	maxelevation	Max elevation	maxelevation_s	x		keyword								x
 field	16	elevationunit	Elevation unit	elevationunit_s	x		keyword								x
 field	17	habitat	Habitat	habitat_s	x		keyword	2,2			9			11	x
-field	18	latlong	LatLong	latlong_p	x		location			3					x
+field	18	latlong	LatLong	latlong_p	x		location								x
 field	19	trscoordinates	TRS coordinates	trscoordinates_s	x		keyword								x
 field	20	datum	Datum	datum_s	x		dropdown								x
 field	21	coordinatesource	Coordinate source	coordinatesource_s	x		keyword								x
