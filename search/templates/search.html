@@ -15,21 +15,38 @@
     <script type="text/javascript" src="{% static "search/js/jquery.tablesorter.min.js" %}"></script>
 {% endblock %}
 
-{% block loginBtn %}
-<div id="user-tools">
-    <a href="{% url 'login' %}?next=/pahma_project/search/search/" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
-</div>
-{% endblock %}
+{% block loginBtn %}{% endblock %}
 
 {% block branding %}
     <h4 class="bannerLeft"></h4>
     <h4 class="bannerRight"></h4>
     <h1 class="bannerTitle" id="site-name">{{ apptitle }}</h1>
+
+    <!-- div class="user-tools" -->
     <div style="float:right; height: 30px;">
         <a href="#" id="about">About</a>
         <a href="#" id="help">Help</a>
         <a href="#" id="terms">Terms</a>
         <a href="#" id="credits">Credits</a>
+    {% if user.is_active and user.is_staff %}
+        {% block userlinks %}
+            {% url 'django-admindocs-docroot' as docsroot %}
+            {% if docsroot %}
+                <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+            {% endif %}
+            {# {% if user.has_usable_password %} #}
+            <!-- <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> / -->
+            {# {% endif %} #}
+            <img style="vertical-align: middle; height: 21px;  padding-left: 15px;"
+                 src="{% static "cspace_django_site/images/usericon.jpg" %}"
+                 title="{% filter force_escape %}{% firstof user.get_short_name user.get_username %}{% endfilter %}"/>
+            <a href="{% url 'logout' %}" id="logout" class="prettyBtn">{% trans 'Sign out' %}</a>
+
+        {% endblock %}
+    {% else %}
+        <a href="{% url 'login' %}?next=/ucjeps_project/public/publicsearch/" id="login"
+           class="prettyBtn">{% trans 'Sign in' %}</a>
+    {% endif %}
     </div>
 {% endblock %}
 

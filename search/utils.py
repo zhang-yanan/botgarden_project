@@ -5,21 +5,23 @@ import csv
 import solr
 import cgi
 import logging
+
 from os import path
 from copy import deepcopy
-from cspace_django_site import settings
 
-#from django.http import HttpResponse, HttpResponseRedirect
+# from django.http import HttpResponse, HttpResponseRedirect
 #from cspace_django_site.main import cspace_django_site
 
 # global variables
 
 from appconfig import MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR
-from appconfig import BMAPPERCONFIGFILE, LOCALDIR, SEARCH_QUALIFIERS
+from appconfig import BMAPPERURL, BMAPPERCONFIGFILE, LOCALDIR, SEARCH_QUALIFIERS
 from appconfig import EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION
 from appconfig import VERSION, FIELDDEFINITIONS, getParms
+from appconfig import DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY
 
-SolrIsUp = True # an initial guess! this is verified below...
+SolrIsUp = True  # an initial guess! this is verified below...
+
 
 def loginfo(infotype, context, request):
     logdata = ''
@@ -39,7 +41,7 @@ def loginfo(infotype, context, request):
     logger.info('%s :: %s :: %s :: %s' % (infotype, count, username, logdata))
 
 
-def getfromXML(element,xpath):
+def getfromXML(element, xpath):
     result = element.find(xpath)
     if result is None: return ''
     result = '' if result.text is None else result.text
@@ -71,7 +73,7 @@ def getfields(fieldset):
     else:
         pickField = 'solrfield'
 
-    return [ f[pickField] for f in FIELDS[fieldset] ]
+    return [f[pickField] for f in FIELDS[fieldset]]
 
 
 def getfacets(response):
@@ -92,17 +94,17 @@ def parseTerm(queryterm):
     terms = queryterm.split(' ')
     terms = ['"' + t + '"' for t in terms]
     result = ' AND '.join(terms)
-    if 'AND' in result: result = '(' + result + ')' # we only need to wrap the query if it has multiple terms
+    if 'AND' in result: result = '(' + result + ')'  # we only need to wrap the query if it has multiple terms
     return result
 
 
 def makeMarker(location):
     if location:
-        location = location.replace(' ','')
-        latitude,longitude = location.split(',')
+        location = location.replace(' ', '')
+        latitude, longitude = location.split(',')
         latitude = float(latitude)
         longitude = float(longitude)
-        return "%0.2f,%0.2f" % (latitude,longitude)
+        return "%0.2f,%0.2f" % (latitude, longitude)
     else:
         return None
 
@@ -158,7 +160,7 @@ def writeCsv(filehandle, items, writeheader, bmapper=False):
         writer.writerow(row)
 
 
-def getMapPoints(context,requestObject):
+def getMapPoints(context, requestObject):
     mappableitems = []
     if 'select-item' in requestObject:
         mapitems = context['items']
@@ -194,7 +196,7 @@ def setupGoogleMap(requestObject, context):
     markerlength = 200
     for item in context['items']:
         if item['csid'] in selected:
-        #if True:
+            #if True:
             try:
                 m = makeMarker(item['location'])
                 if markerlength > 2048: break
@@ -203,7 +205,7 @@ def setupGoogleMap(requestObject, context):
                     #print 'm= x%sx' % m
                     markerlist.append(m)
                     mappableitems.append(item)
-                    markerlength += len(m) + 8 # 8 is the length of '&markers='
+                    markerlength += len(m) + 8  # 8 is the length of '&markers='
             except KeyError:
                 pass
     context['mapmsg'] = []
@@ -240,9 +242,7 @@ def setupBMapper(requestObject, context):
     context['items'] = mappableitems
     bmapperconfigfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, BMAPPERCONFIGFILE)
     tabfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, filename)
-    context[
-        'bmapperurl'] = "http://berkeleymapper.berkeley.edu/run.php?ViewResults=tab&tabfile=%s&configfile=%s&sourcename=PAHMA+result+set&maptype=Terrain" % (
-        tabfile, bmapperconfigfile)
+    context['bmapperurl'] = BMAPPERURL % (tabfile, bmapperconfigfile)
     return context
     # return HttpResponseRedirect(context['bmapperurl'])
 
@@ -278,7 +278,8 @@ def setDisplayType(requestObject):
 
     return displayType
 
-def extractValue(listItem,key):
+
+def extractValue(listItem, key):
     # make all arrays into strings for display
     if key in listItem:
         if type(listItem[key]) == type([]):
@@ -312,11 +313,11 @@ def setConstants(context):
     context['layout'] = LAYOUT
     context['dropdowns'] = FACETS
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
-    context['qualifiers'] = [ { 'val': s, 'dis': s } for s in SEARCH_QUALIFIERS ]
+    context['qualifiers'] = [{'val': s, 'dis': s} for s in SEARCH_QUALIFIERS]
     context['resultoptions'] = [100, 500, 1000, 2000, 10000]
 
-    context['searchrows'] = range(SEARCHROWS+1)[1:]
-    context['searchcolumns'] = range(SEARCHCOLUMNS+1)[1:]
+    context['searchrows'] = range(SEARCHROWS + 1)[1:]
+    context['searchcolumns'] = range(SEARCHCOLUMNS + 1)[1:]
 
     emptyCells = {}
     for row in context['searchrows']:
@@ -343,7 +344,7 @@ def setConstants(context):
 
         # build a list of the search term qualifiers used in this query (for templating...)
         qualfiersInUse = []
-        for formkey,formvalue in requestObject.items():
+        for formkey, formvalue in requestObject.items():
             if '_qualifier' in formkey:
                 qualfiersInUse.append(formkey + ':' + formvalue)
 
@@ -369,7 +370,6 @@ def setConstants(context):
         context['sortkey'] = DEFAULTSORTKEY
 
     if context['start'] < 1: context['start'] = 1
-
 
     context['PARMS'] = PARMS
     if not 'FIELDS' in context:
@@ -412,13 +412,13 @@ def doSearch(context):
             if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane',
                      'pixonly', 'locsonly', 'acceptterms', 'submit', 'start', 'sortkey']: continue
             if '_qualifier' in p: continue
-            if 'select-' in p: continue # skip select control for map markers
-            if not requestObject[p]: continue # uh...looks like we can have empty items...let's skip 'em
+            if 'select-' in p: continue  # skip select control for map markers
+            if not requestObject[p]: continue  # uh...looks like we can have empty items...let's skip 'em
             if 'item-' in p: continue
             searchTerm = requestObject[p]
             terms = searchTerm.split(' OR ')
             ORs = []
-            querypattern = '%s:%s' # default search expression pattern (dates are different)
+            querypattern = '%s:%s'  # default search expression pattern (dates are different)
             for t in terms:
                 t = t.strip()
                 if t == 'Null':
@@ -443,7 +443,7 @@ def doSearch(context):
                             t = t.split(' ')
                             t = ' +'.join(t)
                             t = '(+' + t + ')'
-                            t = t.replace('+-', '-') # remove the plus if user entered a minus
+                            t = t.replace('+-', '-')  # remove the plus if user entered a minus
                             index = PARMS[p][3].replace('_ss', '_txt')
                             index = index.replace('_s', '_txt')
                     elif '_dt' in PARMS[p][3]:
@@ -453,7 +453,7 @@ def doSearch(context):
                         t = t.split(' ')
                         t = ' +'.join(t)
                         t = '(+' + t + ')'
-                        t = t.replace('+-', '-') # remove the plus if user entered a minus
+                        t = t.replace('+-', '-')  # remove the plus if user entered a minus
                         index = PARMS[p][3]
                 if t == 'OR': t = '"OR"'
                 if t == 'AND': t = '"AND"'
@@ -487,7 +487,6 @@ def doSearch(context):
     else:
         locsonly = None
 
-
     print 'Solr query: %s' % querystring
     try:
         startpage = context['maxresults'] * (context['start'] - 1)
@@ -498,7 +497,8 @@ def doSearch(context):
         response = s.query(querystring, facet='true', facet_field=facetfields, fq={},
                            rows=context['maxresults'], facet_limit=MAXFACETS, sort=context['sortkey'],
                            facet_mincount=1, start=startpage)
-        print 'Solr search succeeded, %s results, %s rows requested starting at %s' % (response.numFound, context['maxresults'], startpage)
+        print 'Solr search succeeded, %s results, %s rows requested starting at %s' % (
+        response.numFound, context['maxresults'], startpage)
     #except:
     except Exception as inst:
         #raise
@@ -522,17 +522,18 @@ def doSearch(context):
         # pull out the fields that have special functions in the UI
         for p in PARMS:
             if 'mainentry' in PARMS[p][1]:
-                item['mainentry'] = extractValue(listItem,PARMS[p][3])
+                item['mainentry'] = extractValue(listItem, PARMS[p][3])
             elif 'accession' in PARMS[p][1]:
                 x = PARMS[p]
-                item['accession'] = extractValue(listItem,PARMS[p][3])
+                item['accession'] = extractValue(listItem, PARMS[p][3])
                 item['accessionfield'] = PARMS[p][4]
             if 'sortkey' in PARMS[p][1]:
                 item['sortkey'] = extractValue(listItem, PARMS[p][3])
 
         for p in FIELDS[displayFields]:
             try:
-                otherfields.append({'label':p['label'],'name':p['name'],'value': extractValue(listItem,p['solrfield'])})
+                otherfields.append(
+                    {'label': p['label'], 'name': p['name'], 'value': extractValue(listItem, p['solrfield'])})
             except:
                 pass
                 #raise
@@ -561,7 +562,6 @@ def doSearch(context):
     context['pagesummary'] = 'Page %s of %s [items %s to %s]. ' % (
         context['start'], numberOfPages, startpage + 1,
         min(context['start'] * context['maxresults'], response._numFound))
-
 
     context['count'] = response._numFound
 
@@ -592,76 +592,6 @@ def doSearch(context):
     context['time'] = '%8.3f' % (time.time() - elapsedtime)
     return context
 
-def loadFields(fieldFile):
-
-    # get "frontend" configuration from the ... frontend configuration file
-    print 'Reading field definitions from %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile)
-
-    global FIELDS
-    global PARMS
-    global SEARCHCOLUMNS
-    global SEARCHROWS
-    global FACETS
-    global DROPDOWNS
-    global LOCATION
-    global SOLRSERVER
-    global SOLRCORE
-    global TITLE
-    global DEFAULTSORTKEY
-
-    LOCATION = ''
-    DROPDOWNS = []
-    FACETS = {}
-
-    FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile))
-
-    for p in PARMS:
-        if 'dropdown' in PARMS[p][1]:
-            DROPDOWNS.append(PARMS[p][4])
-        if 'location' in PARMS[p][1]:
-            LOCATION = PARMS[p][3]
-
-    if LOCATION == '':
-        print "LOCATION not set, please specify a variable as 'location'"
-
-    context = {'displayType': 'list', 'maxresults': 0, 'sortkey': '',
-               'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000}}
-
-    # let's fool doSearch into including the dropdown fields in the facet query.
-    # we want them here, but nowhere else...
-    # yes, it's pretty much of a hack, unfortunately
-
-    keepFacets = deepcopy(FIELDS['Facet'])
-    facetNames = [f['name'] for f in FIELDS['Facet']]
-
-    for f in FIELDS['Search']:
-        if 'dropdown' in f['fieldtype'] and not f['name'] in facetNames:
-            FIELDS['Facet'].append(f)
-
-    context = doSearch(context)
-
-    # restore actual facet list. Note that we did not touch FIELDS['Search']...
-    FIELDS['Facet'] = deepcopy(keepFacets)
-
-    if 'errormsg' in context:
-        solrIsUp = False
-        print 'Solr facet search failed. Concluding that Solr is down or unreachable... Will not be trying again! Please fix and restart!'
-    else:
-        for facet in context['facets']:
-            print 'facet',facet[0],len(facet[1])
-            FACETS[facet[0]] = sorted(facet[1], key=lambda tup: tup[0])
-            #if facet[0] in DROPDOWNS:
-            #    FACETS[facet[0]] = sorted(facet[1])
-            # if the facet is not in a dropdown, save the memory for something better
-            #else:
-            #    FACETS[facet[0]] = []
-            # build dropdowns for searching
-            for f in FIELDS['Search']:
-                if f['name'] == facet[0] and 'dropdown' in f['fieldtype']:
-                    f['dropdowns'] = sorted(facet[1], key=lambda tup: tup[0])
-
-# on startup, do a query to get options values for forms...
-loadFields(FIELDDEFINITIONS)
 
 # Get an instance of a logger, log some startup info
 logger = logging.getLogger(__name__)

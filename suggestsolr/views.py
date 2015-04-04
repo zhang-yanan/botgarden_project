@@ -25,7 +25,7 @@ from search.appconfig import getParms
 
 import solr
 
-solrConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'suggestsolr')
+#solrConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'suggestsolr')
 searchConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'search')
 SUGGESTIONS = searchConfig.get('search', 'SUGGESTIONS')
 FIELDDEFINITIONS = searchConfig.get('search', 'FIELDDEFINITIONS')

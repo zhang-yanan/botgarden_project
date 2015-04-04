@@ -1,7 +1,6 @@
 __author__ = 'jblowe, amywieliczka'
 
 import time, datetime
-from os import path
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, render_to_response, redirect
@@ -15,7 +14,7 @@ from appconfig import CSVPREFIX, CSVEXTENSION, MAXRESULTS
 
 # global variables (at least to this module...)
 
-from utils import loadFields
+from appconfig import loadFields
 
 # SEARCHRESULTS = {}
 

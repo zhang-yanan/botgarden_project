@@ -1,9 +1,12 @@
 # set global variables
 
-from os import path, popen
-from common import cspace  # we use the config file reading function
-from cspace_django_site import settings
 import csv
+import solr
+from os import path, popen
+from copy import deepcopy
+
+from cspace_django_site import settings
+from common import cspace  # we use the config file reading function
 
 
 def getParms(parmFile):
@@ -106,26 +109,6 @@ def parseRows(rows):
 def loadConfiguration(configFileName):
     config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), configFileName)
 
-    global MAXMARKERS
-    global MAXRESULTS
-    global MAXLONGRESULTS
-    global MAXFACETS
-    global EMAILABLEURL
-    global IMAGESERVER
-    global CSPACESERVER
-    global INSTITUTION
-    global BMAPPERSERVER
-    global BMAPPERDIR
-    global BMAPPERCONFIGFILE
-    global LOCALDIR
-    global SEARCH_QUALIFIERS
-    global FIELDDEFINITIONS
-    global CSVPREFIX
-    global CSVEXTENSION
-    global SUGGESTIONS
-    global LAYOUT
-    global VERSION
-
     try:
         MAXMARKERS = int(config.get('search', 'MAXMARKERS'))
         MAXRESULTS = int(config.get('search', 'MAXRESULTS'))
@@ -138,15 +121,16 @@ def loadConfiguration(configFileName):
         BMAPPERSERVER = config.get('search', 'BMAPPERSERVER')
         BMAPPERDIR = config.get('search', 'BMAPPERDIR')
         BMAPPERCONFIGFILE = config.get('search', 'BMAPPERCONFIGFILE')
+        BMAPPERURL = config.get('search', 'BMAPPERURL')
         # SOLRSERVER = config.get('search', 'SOLRSERVER')
-        #SOLRCORE = config.get('search', 'SOLRCORE')
+        # SOLRCORE = config.get('search', 'SOLRCORE')
         LOCALDIR = config.get('search', 'LOCALDIR')
         SEARCH_QUALIFIERS = config.get('search', 'SEARCH_QUALIFIERS').split(',')
         SEARCH_QUALIFIERS = [unicode(x) for x in SEARCH_QUALIFIERS]
         FIELDDEFINITIONS = config.get('search', 'FIELDDEFINITIONS')
         CSVPREFIX = config.get('search', 'CSVPREFIX')
         CSVEXTENSION = config.get('search', 'CSVEXTENSION')
-        #TITLE = config.get('search', 'TITLE')
+        # TITLE = config.get('search', 'TITLE')
         SUGGESTIONS = config.get('search', 'SUGGESTIONS')
         LAYOUT = config.get('search', 'LAYOUT')
 
@@ -158,10 +142,86 @@ def loadConfiguration(configFileName):
             VERSION = 'Unknown'
 
     except:
+        raise
         print 'error in configuration file %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + configFileName)
         print 'this webapp will probably not work.'
 
+    return MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR, BMAPPERURL, BMAPPERCONFIGFILE, CSVPREFIX, CSVEXTENSION, LOCALDIR, SEARCH_QUALIFIERS, EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION, VERSION, FIELDDEFINITIONS
 
-loadConfiguration('search')
+# read this app's config file
+MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR, BMAPPERURL, BMAPPERCONFIGFILE, CSVPREFIX, CSVEXTENSION, LOCALDIR, SEARCH_QUALIFIERS, EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION, VERSION, FIELDDEFINITIONS = loadConfiguration('search')
 print 'Configuration successfully read'
 
+
+def loadFields(fieldFile):
+    # get "frontend" configuration from the ... frontend configuration file
+    print 'Reading field definitions from %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile)
+
+    LOCATION = ''
+    DROPDOWNS = []
+    FACETS = {}
+
+    FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY = getParms(
+        path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile))
+
+    for p in PARMS:
+        if 'dropdown' in PARMS[p][1]:
+            DROPDOWNS.append(PARMS[p][4])
+        if 'location' in PARMS[p][1]:
+            LOCATION = PARMS[p][3]
+
+    if LOCATION == '':
+        print "LOCATION not set, please specify a variable as 'location'"
+
+    facetfields = [f['solrfield'] for f in FIELDS['Facet']]
+
+    # facetNames = [f['name'] for f in FIELDS['Facet']]
+    #facetfields = []
+
+    #for f in FIELDS['Search']:
+    #    if 'dropdown' in f['fieldtype'] and not f['name'] in facetNames:
+    #        facetfields.append(f['solrfield'])
+
+    # create a connection to a solr server
+    s = solr.SolrConnection(url='%s/%s' % (SOLRSERVER, SOLRCORE))
+
+    try:
+        response = s.query('*:*', facet='true', facet_field=facetfields, fq={},
+                           rows=0, facet_limit=1000, facet_mincount=1, start=0)
+
+        print 'Solr search succeeded, %s results' % (response.numFound)
+
+        # facets = getfacets(response)
+
+        facets = response.facet_counts
+        facets = facets['facet_fields']
+        _facets = {}
+        for key, values in facets.items():
+            _v = []
+            for k, v in values.items():
+                _v.append((k, v))
+            _facets[key] = sorted(_v, key=lambda (a, b): b, reverse=True)
+        facets = _facets
+
+        for facet, values in facets.items():
+            print 'facet', facet, len(values)
+            FACETS[facet] = sorted(values, key=lambda tup: tup[0])
+            # build dropdowns for searching
+            for f in FIELDS['Search']:
+                if f['solrfield'] == facet and 'dropdown' in f['fieldtype']:
+                    # tricky: note we are in fact inserting the list of dropdown
+                    # values into the existing global variable FIELDS
+                    f['dropdowns'] = sorted(values, key=lambda tup: tup[0])
+
+    #except:
+    except Exception as inst:
+        #raise
+        errormsg = 'Solr query for facets failed: %s' % str(inst)
+        solrIsUp = False
+        print 'Solr facet search failed. Concluding that Solr is down or unreachable... Will not be trying again! Please fix and restart!'
+
+    return DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY
+
+# on startup, do a query to get options values for forms...
+DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY = loadFields(FIELDDEFINITIONS)
+print 'Reading field definitions from %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS)

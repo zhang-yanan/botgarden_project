@@ -9,18 +9,7 @@
         </p>
     </div>
     <div style="background-color: #e8e8e8; padding: 5px 10px 5px 10px; float: right">
-        <div style="float:right">
-            <input type="checkbox" {% if pixonly %}checked {% endif %} name='pixonly' value="pixonly"> Include only items with images.
-            <br/>
-            <input type="checkbox" {% if pixonly %}checked {% endif %} name='locsonly' value="locsonly"> Include only items with latlongs.
-        </div>
-        <div style="float:right; text-align: center; padding-right: 5px;">
-            page<br/>
-            <a href="#" id="prev">&lt;</a>&nbsp;
-            <input style="text-align: center;" type="text" min="1" name="start" id="start" size="3" value="{{ start }}">
-            <a href="#" id="next">&gt;</a>&nbsp;
-        </div>
-        <div style="float:right">
+           <div style="float:left">
             Display options: &nbsp; &nbsp;
             <button type="button" id="search-list" name="search-list" class="prettyBtn">List</button>
             <button type="button" id="search-full" name="search-full" class="prettyBtn">Full</button>
@@ -31,6 +20,17 @@
                     <option value="{{ option }}"{% if option ==  maxresults %} selected{% endif %}>{{ option }}</option>
                 {% endfor %}
             </select> items per page. &nbsp; &nbsp;
+        </div>
+        <div style="float:left; text-align: center; padding-right: 5px;">
+            page<br/>
+            <a href="#" id="prev">&lt;</a>&nbsp;
+            <input style="text-align: center;" type="text" min="1" name="start" id="start" size="3" value="{{ start }}">
+            <a href="#" id="next">&gt;</a>&nbsp;
+        </div>
+        <div style="float:left">
+            <input type="checkbox" {% if pixonly %}checked {% endif %} name='pixonly' value="pixonly"> Include only items with images.
+            <br/>
+            <input type="checkbox" {% if pixonly %}checked {% endif %} name='locsonly' value="locsonly"> Include only items with latlongs.
         </div>
     </div>
     <!--span id="acceptterms" class="tiny" style="float: right;">

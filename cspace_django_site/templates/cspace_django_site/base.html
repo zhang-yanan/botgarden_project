@@ -25,25 +25,27 @@
 
     {% if not is_popup %}
     <!-- Header -->
-    <div id="header">
-        {% if user.is_active and user.is_staff %}
-        <div id="user-tools">
-            {% trans 'Hi,' %}
-            <span id="username">{% filter force_escape %}{% firstof user.get_short_name user.get_username %}{% endfilter %}</span>
-            {% block userlinks %}
-                {% url 'django-admindocs-docroot' as docsroot %}
-                {% if docsroot %}
-                    <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+        <div id="header">
+            {% block loginBtn %}
+                {% if user.is_active and user.is_staff %}
+                    <div id="user-tools">
+                        {% trans 'Hi,' %}
+                        <span id="username">{% filter force_escape %}
+                            {% firstof user.get_short_name user.get_username %}{% endfilter %}</span>
+                        {% block userlinks %}
+                            {% url 'django-admindocs-docroot' as docsroot %}
+                            {% if docsroot %}
+                                <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                            {% endif %}
+                            {# {% if user.has_usable_password %} #}
+                            <!-- <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> / -->
+                            {# {% endif %} #}
+                            <a href="{% url 'logout' %}" id="logout" class="prettyBtn">{% trans 'Sign out' %}</a>
+                        {% endblock %}
+                    </div>
+                {% else %}
                 {% endif %}
-                {# {% if user.has_usable_password %} #}
-                <!-- <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> / -->
-                {# {% endif %} #}
-                <a href="{% url 'logout' %}" id="logout" class="prettyBtn">{% trans 'Sign out' %}</a>
             {% endblock %}
-        </div>
-        {% else %}
-        {% block loginBtn %}{% endblock %}
-        {% endif %}
 
         <div id="branding">
         {% block branding %}{% endblock %}
