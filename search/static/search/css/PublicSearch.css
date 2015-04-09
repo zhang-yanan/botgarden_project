@@ -49,6 +49,12 @@
     bottom: -2px;
 }
 
+.cspaceImage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 a:link, a:visited { color: #5b80b2; text-decoration: none; }
 a:hover { color: #036; }
 a { color: #5b80b2; text-decoration: none; }
