@@ -4,6 +4,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.contrib.auth import views
 
+import landing
+
 admin.autodiscover()
 
 #
@@ -22,7 +24,7 @@ urlpatterns = patterns('',
                        #  url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
                        url(r'^admin/', include(admin.site.urls)),
-                       url(r'^$', 'hello.views.home', name='home'),
+                       url(r'^$', include('landing.urls', namespace='landing')),
                        url(r'^ireports/', include('ireports.urls')),
                        url(r'^autosuggest/', include('autosuggest.urls', namespace='autosuggest')),
                        url(r'^suggestpostgres/', include('suggestpostgres.urls', namespace='suggestpostgres')),
@@ -31,7 +33,7 @@ urlpatterns = patterns('',
                        url(r'^search/', include('search.urls')),
                        url(r'^service/', include('service.urls')),
                        url(r'^accounts/login/$', views.login, name='login'),
-                       url(r'^accounts/logout/$', views.logout_then_login, name='logout'),
-                       url(r'^landing', include('landing.urls', namespace='landing')),
-                       url(r'^imaginator', include('imaginator.urls', namespace='imaginator')),
+                       url(r'^accounts/logout/$', views.logout, name='logout'),
+                       url(r'^landing/', include('landing.urls', namespace='landing')),
+                       url(r'^imaginator/', include('imaginator.urls', namespace='imaginator')),
                        )

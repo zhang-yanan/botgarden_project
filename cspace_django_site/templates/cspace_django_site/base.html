@@ -25,33 +25,19 @@
 
     {% if not is_popup %}
     <!-- Header -->
-        <div id="header">
-            {% block loginBtn %}
-                {% if user.is_active and user.is_staff %}
-                    <div id="user-tools">
-                        {% trans 'Hi,' %}
-                        <span id="username">{% filter force_escape %}
-                            {% firstof user.get_short_name user.get_username %}{% endfilter %}</span>
-                        {% block userlinks %}
-                            {% url 'django-admindocs-docroot' as docsroot %}
-                            {% if docsroot %}
-                                <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
-                            {% endif %}
-                            {# {% if user.has_usable_password %} #}
-                            <!-- <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> / -->
-                            {# {% endif %} #}
-                            <a href="{% url 'logout' %}" id="logout" class="prettyBtn">{% trans 'Sign out' %}</a>
-                        {% endblock %}
-                    </div>
-                {% else %}
-                {% endif %}
-            {% endblock %}
+    <div id="header">
 
         <div id="branding">
         {% block branding %}{% endblock %}
         </div>
 
         {% block nav-global %}{% endblock %}
+        
+        <div id="user-tools">
+          {% block loginBtn %}
+            {% include "cspace_django_site/loginBtn.html" %}
+          {% endblock %}
+        </div>
     </div>
     <!-- END Header -->
     {% endif %}

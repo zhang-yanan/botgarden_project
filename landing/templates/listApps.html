@@ -1,6 +1,12 @@
 {% extends "cspace_django_site/base_site.html" %}
 {% load i18n admin_static %}
 
+{% block loginBtn %}
+  {% if user.is_active %}
+    {% include "cspace_django_site/loginBtn.html" %}
+  {% endif %}
+{% endblock %}
+
 {% block content %}
     <div id="content-main">
         <h1>{{ title }}</h1>
@@ -15,6 +21,11 @@
                     </tr>
                 {% endfor %}
             </table>
+            <br><br>
+            {% if not user.is_active %}
+              {% include "cspace_django_site/loginBtn.html" %} to view all available applications
+            {% endif %}
+            <br><br>
             <hr/>
             <table>
                 <tr>
