@@ -69,8 +69,11 @@ def index(request):
         # do search
         loginfo('start search', context, request)
         context = doSearch(context)
+        context['loginBtnNext'] = 'imaginator/'
 
         return render(request, 'imagineImages.html', context)
 
     else:
+        context['loginBtnNext'] = 'imaginator/'
+        
         return render(request, 'imagineImages.html', context)
