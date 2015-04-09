@@ -173,7 +173,7 @@ def loadFields(fieldFile):
     if LOCATION == '':
         print "LOCATION not set, please specify a variable as 'location'"
 
-    facetfields = [f['solrfield'] for f in FIELDS['Facet']]
+    facetfields = [f['solrfield'] for f in FIELDS['Search'] if f['fieldtype'] == 'dropdown']
 
     # facetNames = [f['name'] for f in FIELDS['Facet']]
     #facetfields = []
@@ -208,7 +208,8 @@ def loadFields(fieldFile):
             FACETS[facet] = sorted(values, key=lambda tup: tup[0])
             # build dropdowns for searching
             for f in FIELDS['Search']:
-                if f['solrfield'] == facet and 'dropdown' in f['fieldtype']:
+                #if f['solrfield'] == facet and 'dropdown' in f['fieldtype']:
+                if 'dropdown' in f['fieldtype'] and f['solrfield'] == facet:
                     # tricky: note we are in fact inserting the list of dropdown
                     # values into the existing global variable FIELDS
                     f['dropdowns'] = sorted(values, key=lambda tup: tup[0])

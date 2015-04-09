@@ -1,48 +1,34 @@
 {% load staticfiles %}
 
 {% for item in items %}
-    <div style="float:right;">
-        {% if item.blobs %}
-            {% for t in item.blobs %}
-                <a target="image"
-                   href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content"><img height="100px" src="{{ imageserver }}/blobs/{{ t }}/derivatives/Thumbnail/content"/>
-                </a>
-            {% endfor %}
-        {% endif %}
-    </div>
     <div>
+        <div style="float:right;">
+            {% if item.blobs %}
+                {% for t in item.blobs %}
+                    <a target="image" href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content"><img style="max-width: 600px; height: 260px" src="{{ imageserver }}/blobs/{{ t }}/derivatives/Medium/content"/></a>
+                {% endfor %}
+            {% endif %}
+        </div>
         <div class="result-title">
-            <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
-            <b><a href="?maxresults=1&displayType=full&{{ item.accessionfield }}={{ item.accession }}">{{ item.accession }}</a></b>
+                <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
+                <b><a href="?maxresults=1&displayType=full&{{ item.accessionfield }}={{ item.accession }}">{{ item.accession }}</a></b>
             {% if user.is_active and user.is_staff %}
-                <a target="cspace" href="{{ cspaceserver }}/collectionspace/ui/{{ institution }}/html/cataloging.html?csid={{ item.csid }}"><img src="{% static "search/images/open_cspace.png" %}" class="cspaceLink">Open in CSpace</a>
+                <a target="cspace"
+                   href="{{ cspaceserver }}/collectionspace/ui/{{ institution }}/html/cataloging.html?csid={{ item.csid }}"><img
+                        src="{% static "search/images/open_cspace.png" %}" class="cspaceLink">Open in CSpace</a>
             {% endif %}
         </div>
         <div>
-
-
-        <p><h4>{{ item.mainentry }}</h4></p>
-
-            {% if item.labelheader %}
-                <h4><b>{{ labels.labelheader }}: {{ item.labelheader }}</b></h4>{% endif %}
-            <h2><a class="facet-item" data-facetType="determination">{{ item.determination }}</a></h2>
-            {% if item.determinationdetails %}
-                <div>{{ labels.determinationdetails }}: {{ item.determinationdetails }}</div>{% endif %}
-            <a class="facet-item" data-facetType="majorgroup">{{ item.majorgroup }}</a>
-            {% if item.previousdeterminations %}
-                <h4>{{ labels.previousdeterminations }}</h4>
-                {% for t in item.previousdeterminations %}
-                    <li>{{ t }}</li>
-                {% endfor %}
-            {% endif %}
-
+            <p><h4>{{ item.mainentry }}</h4></p>
             {% if item.location %}
                 <div>LatLong: {{ item.location }}
                     {% if item.marker %}
                         <a class="map-item">[click for map]</a>
                         <div data-marker="{{ item.marker }}" class="small-map" style="display:none;">
                             <div style="height: 40px;">
-                                <small><a target="_map" href="https://maps.google.com/maps/i?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a>
+                                <small><a target="_map"
+                                          href="https://maps.google.com/maps/i?q=loc:{{ item.marker }}&amp;source=embed">Larger
+                                    Map</a>
                                 </small>
                             </div>
                         </div>
@@ -51,15 +37,11 @@
             {% endif %}
 
             {% for i in item.otherfields %}
-                {% if i.value %}<div>{{ i.label }}: <a class="facet-item" data-facetType="{{ i.name }}">{{ i.value }}</a></div>{% endif %}
+                {% if i.value %}
+                    <div>{{ i.label }}: <a class="facet-item" data-facetType="{{ i.name }}">{{ i.value }}</a></div>
+                {% endif %}
             {% endfor %}
 
-             {% if item.associatedtaxa %}
-                <h4>{{ labels.associatedtaxa }}</h4>
-                {% for t in item.associatedtaxa %}
-                    <li>{{ t }}</li>
-                {% endfor %}
-            {% endif %}
         </div>
     </div>
     <hr/>
