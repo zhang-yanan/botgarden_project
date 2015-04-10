@@ -16,8 +16,6 @@ from appconfig import CSVPREFIX, CSVEXTENSION, MAXRESULTS
 
 from appconfig import loadFields
 
-# SEARCHRESULTS = {}
-
 
 def direct(request):
     return redirect('search/')
@@ -29,8 +27,6 @@ def search(request):
         context = {'searchValues': dict(request.GET.iteritems())}
         context = doSearch(context)
 
-        #global SEARCHRESULTS
-        #SEARCHRESULTS = context
     else:
         context = setConstants({})
 
