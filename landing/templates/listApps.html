@@ -35,6 +35,9 @@
             </table>
         {% else %}
             <p>{% trans "No apps" %}</p>
+            {% if not user.is_active %}
+              {% include "cspace_django_site/loginBtn.html" %} to view all available applications
+            {% endif %}
         {% endif %}
     </div>
 {% endblock %}
