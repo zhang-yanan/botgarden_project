@@ -1,7 +1,7 @@
 # Parameters for UC Botanical Garden INTERNAL portal															
 #															
-date	04/11/15														
-revision	1.7														
+date	04/16/15														
+revision	1.8														
 #															
 title	Plant Collection Information														
 #															
@@ -52,3 +52,7 @@ field	36	conservecat	Conservation Category	conservecat_ss	x		dropdown	8,2							
 field	37	voucherlist	Vouchers	voucherlist_ss	x		keyword	11,2			21			22	x
 field	38	vouchercount	Voucher Count	vouchercount_s	x		keyword								x
 field	39	text	Keyword	text	x		keyword	3,2							x
+field	40	floweringverbatim	Flowering (verbatim)	floweringverbatim_ss	x		keyword				22				x
+field	41	fruitingverbatim	Fruiting (verbatim)	fruitingverbatim_ss	x		keyword				23				x
+field	40	flowering	Flowering	flowering_ss	x		array=[jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec]	12,1			24				x
+field	41	fruiting	Fruiting	fruiting_ss	x		array=[jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec]	13,1			25				x
