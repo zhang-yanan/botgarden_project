@@ -19,7 +19,7 @@
             {% endif %}
         </div>
         <div>
-            <p><h4>{{ item.mainentry }}</h4></p>
+            <p><h4>{{ item.mainentry|safe }}</h4></p>
             {% if item.location %}
                 <div>LatLong: {{ item.location }}
                     {% if item.marker %}
