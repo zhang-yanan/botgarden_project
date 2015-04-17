@@ -42,29 +42,30 @@ field	27	locality	Geographic Place Name	locality_s	x	pl	keyword	5,2			13			14	x
 field	28	csid	CSID	csid_s	x		keyword								x
 field	29	rare	Rare?	rare_s	x		dropdown	6,2	8		14	8	7	15	x
 field	30	deadflag	Dead?	deadflag_s	x		dropdown	10,2	9		15	9	8	16	x
-field	30	flowercolor	Flower Color	flowercolor_s	x		keyword	11,1	10		16	10	9	17	x
-field	31	determinationnoauth	Determination	determinationnoauth_s	x		keyword				17			18	x
-field	32	reasonformove	Reason for Move	reasonformove_s	x		keyword				18			19	x
-field	33	vouchers	Has Vouchers	vouchers_s	x		dropdown	9,2			19			20	x
-field	34	conservationinfo	Conservation Information	conservationinfo_ss	x		keyword				20			21	
-field	35	conserveorg	Conservation Organization	conserveorg_ss	x		dropdown	7,2							x
-field	36	conservecat	Conservation Category	conservecat_ss	x		dropdown	8,2							x
-field	37	voucherlist	Vouchers	voucherlist_ss	x		keyword	11,2			21			22	x
-field	38	vouchercount	Voucher Count	vouchercount_s	x		keyword								x
-field	39	text	Keyword	text	x		keyword	3,2							x
-field	40	floweringverbatim	Flowering (verbatim)	floweringverbatim_ss	x		keyword				22			23	x
-field	41	fruitingverbatim	Fruiting (verbatim)	fruitingverbatim_ss	x		keyword				23			24	x
-field	40	flowering	Flowering	flowering_ss	x		array=[jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec]	12,1			24				x
-field	41	fruiting	Fruiting	fruiting_ss	x		array=[jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec]	13,1			25				x
-field	42	authorsParsed	Authors (parsed)	authorsParsed_s	x		keyword				26			25	x
-field	43	authorship	Authorship	authorship_s	x		keyword				27			26	x
-field	44	bracketAuthorship	Bracket Authorship	bracketAuthorship_s	x		keyword				28			27	x
-field	45	canonicalName	Canonical Name	canonicalName_s	x		keyword				29			28	x
-field	46	canonicalNameComplete	Canonical Name Complete	canonicalNameComplete_s	x		keyword				30			29	x
-field	47	canonicalNameWithMarker	Canonical Name With Marker	canonicalNameWithMarker_s	x		keyword				31			30	x
-field	48	genusOrAbove	Genus or above	genusOrAbove_s	x		keyword				32			31	x
-field	49	infraSpecificEpithet	Infraspecific Epithet	infraSpecificEpithet_s	x		keyword				33			32	x
-field	50	rankMarker	Rank Marker	rankMarker_s	x		keyword				34			33	x
-field	51	scientificName	Scientific Name	scientificName_s	x		keyword				35			34	x
-field	52	specificEpithet	Specific Epithet	specificEpithet_s	x		keyword				35			35	x
-field	53	type	Type	type_s	x		dropdown				37			36	x
+field	31	flowercolor	Flower Color	flowercolor_s	x		keyword	11,1	10		16	10	9	17	x
+field	32	determinationnoauth	Determination	determinationnoauth_s	x		keyword				17			18	x
+field	33	reasonformove	Reason for Move	reasonformove_s	x		keyword				18			19	x
+field	34	vouchers	Has Vouchers	vouchers_s	x		dropdown	9,2			19			20	x
+field	35	conservationinfo	Conservation Information	conservationinfo_ss	x		keyword				20			21	
+field	36	conserveorg	Conservation Organization	conserveorg_ss	x		dropdown	7,2							x
+field	37	conservecat	Conservation Category	conservecat_ss	x		dropdown	8,2							x
+field	38	voucherlist	Vouchers	voucherlist_ss	x		keyword	11,2			21			22	x
+field	39	vouchercount	Voucher Count	vouchercount_s	x		keyword								x
+field	40	text	Keyword	text	x		keyword	3,2							x
+field	41	floweringverbatim	Flowering (verbatim)	floweringverbatim_ss	x		keyword				22			23	x
+field	40	fruitingverbatim	Fruiting (verbatim)	fruitingverbatim_ss	x		keyword				23			24	x
+field	41	flowering	Flowering	flowering_ss	x		array=[jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec]	12,1			24				x
+field	42	fruiting	Fruiting	fruiting_ss	x		array=[jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec]	13,1			25				x
+field	43	authorsParsed	Authors (parsed)	authorsParsed_s	x		keyword				26			25	x
+field	44	authorship	Authorship	authorship_s	x		keyword				27			26	x
+field	45	bracketAuthorship	Bracket Authorship	bracketAuthorship_s	x		keyword				28			27	x
+field	46	canonicalName	Canonical Name	canonicalName_s	x		keyword				29			28	x
+field	47	canonicalNameComplete	Canonical Name Complete	canonicalNameComplete_s	x		keyword				30			29	x
+field	48	canonicalNameWithMarker	Canonical Name With Marker	canonicalNameWithMarker_s	x		keyword				31			30	x
+field	49	genusOrAbove	Genus or above	genusOrAbove_s	x		keyword				32			31	x
+field	50	infraSpecificEpithet	Infraspecific Epithet	infraSpecificEpithet_s	x		keyword				33			32	x
+field	51	rankMarker	Rank Marker	rankMarker_s	x		keyword				34			33	x
+field	52	scientificName	Scientific Name	scientificName_s	x		keyword				35			34	x
+field	53	specificEpithet	Specific Epithet	specificEpithet_s	x		keyword				35			35	x
+field	54	type	Type	type_s	x		dropdown				37			36	x
+field	55	blobs	blob_ss	blob_ss	x		blob							50	x
