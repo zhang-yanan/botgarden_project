@@ -1,0 +1,46 @@
+<div id="computestatistics">
+    <table>
+        <tr>
+            <td>
+                <button type="button" name="statistics" id="statistics" class="prettyBtn">Cross tabulations</button>
+            </td>
+            <!-- th style="vertical-align: middle;">Group by:</th>
+            <td>
+                <select id="groupby" name="groupby">
+                    <option value="">Please select</option>
+                    {% for value in statsfields %}
+                        <option value="{{ value.0 }}"{% if value.0 == field.value %}
+                                selected{% endif %}>{{ value.1|slice:":40" }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </td -->
+            <th style="vertical-align: middle;">Columns:</th>
+            <td>
+                <select id="x" name="x">
+                    <option value="">Please select</option>
+                    {% for value in statsfields %}
+                        <option value="{{ value.0 }}"{% if value.0 == field.value %}
+                                selected{% endif %}>{{ value.1|slice:":40" }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </td>
+            <th style="vertical-align: middle;">Rows</th>
+            <td>
+                <select id="y" name="y">
+                    <option value="">Please select</option>
+                    {% for value in statsfields %}
+                        <option value="{{ value.0 }}"{% if value.0 == field.value %}
+                                selected{% endif %}>{{ value.1|slice:":40" }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <button type="button" name="downloadstats" id="downloadstats" class="prettyBtn">Download Statisics as CSV</button>
+            </td>
+        </tr>
+    </table>
+    <div id="statsresults">{% include "statsResults.html" %}</div>
+</div>

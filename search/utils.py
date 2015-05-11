@@ -19,6 +19,7 @@ from appconfig import BMAPPERURL, BMAPPERCONFIGFILE, LOCALDIR, SEARCH_QUALIFIERS
 from appconfig import EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION
 from appconfig import VERSION, FIELDDEFINITIONS, getParms
 from appconfig import DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY
+from appconfig import DERIVATIVECOMPACT, DERIVATIVEGRID, SIZECOMPACT, SIZEGRID
 
 SolrIsUp = True  # an initial guess! this is verified below...
 
@@ -108,6 +109,16 @@ def makeMarker(location):
     else:
         return None
 
+def checkValue(cell):
+    # the following few lines are a hack to handle non-unicode data which appears to be present in the solr datasource
+    if isinstance(cell, unicode):
+        try:
+            cell = cell.translate({0xd7: u"x"})
+            cell = cell.decode('utf-8', 'ignore').encode('utf-8')
+        except:
+            print 'unicode problem', cell.encode('utf-8', 'ignore')
+            cell = u'invalid unicode data'
+    return cell
 
 def writeCsv(filehandle, items, writeheader, bmapper=False):
     if bmapper:
@@ -116,9 +127,8 @@ def writeCsv(filehandle, items, writeheader, bmapper=False):
         fieldset = getfields('inCSV')
     print "Fieldset: %s" % fieldset
     writer = csv.writer(filehandle, delimiter='\t')
-    # write the berkeley mapper header as the header for the csv file, if asked...
-    if writeheader:
-        writer.writerow(getfields('bMapper'))
+    # write the header
+    writer.writerow(fieldset)
     for item in items:
         # get the cells from the item dict in the order specified; make empty cells if key is not found.
         row = []
@@ -127,36 +137,20 @@ def writeCsv(filehandle, items, writeheader, bmapper=False):
             for x in item['otherfields']:
                 if x['name'] not in fieldset:
                     continue
-                r.append(x['value'])
+                r.append(checkValue(x['value']))
             location = item['location']
             l = location.split(',')
             r.append(l[0])
             r.append(l[1])
             for cell in r:
-                # the following few lines are a hack to handle non-unicode data which appears to be present in the solr datasource
-                if isinstance(cell, unicode):
-                    try:
-                        cell = cell.translate({0xd7: u"x"})
-                        cell = cell.decode('utf-8', 'ignore').encode('utf-8')
-                    except:
-                        print 'unicode problem', cell.encode('utf-8', 'ignore')
-                        cell = u'invalid unicode data'
                 row.append(cell)
-            writer.writerow(row)
-            continue
-        for x in item['otherfields']:
-            if x['name'] not in fieldset:
-                continue
-            cell = x['value']
-            # the following few lines are a hack to handle non-unicode data which appears to be present in the solr datasource
-            if isinstance(cell, unicode):
-                try:
-                    cell = cell.translate({0xd7: u"x"})
-                    cell = cell.decode('utf-8', 'ignore').encode('utf-8')
-                except:
-                    print 'unicode problem', cell.encode('utf-8', 'ignore')
-                    cell = u'invalid unicode data'
-            row.append(cell)
+        else:
+            for x in item['otherfields']:
+                if x['name'] not in fieldset:
+                    continue
+                cell = checkValue(x['value'])
+                row.append(cell)
+
         writer.writerow(row)
 
 
@@ -312,6 +306,10 @@ def setConstants(context):
     context['version'] = VERSION
     context['layout'] = LAYOUT
     context['dropdowns'] = FACETS
+    context['derivativecompact'] = DERIVATIVECOMPACT
+    context['derivativegrid'] = DERIVATIVEGRID
+    context['sizecompact'] = SIZECOMPACT
+    context['sizegrid'] = SIZEGRID
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
     context['qualifiers'] = [{'val': s, 'dis': s} for s in SEARCH_QUALIFIERS]
     context['resultoptions'] = [100, 500, 1000, 2000, 10000]
@@ -512,6 +510,8 @@ def doSearch(context):
     imageCount = 0
     if 'berkeleymapper' in context:
         displayFields = 'bMapper'
+    elif 'csv' in requestObject:
+        displayFields = 'inCSV'
     else:
         displayFields = context['displayType'] + 'Display'
     for i, listItem in enumerate(results):

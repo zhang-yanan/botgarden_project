@@ -28,28 +28,26 @@
         {% include "cspace_django_site/loginBtn.html" with loginBtnNext="search/" %}
     </div>
     <div style="float:right; margin-top: 6px;" class="unit">
-        <a href="#" id="about">About</a>
-        <a href="#" id="help">Help</a>
-        <a href="#" id="terms">Terms</a>
-        <a href="#" id="credits">Credits</a>
+        {% for info in additionalInfo %}
+            <a href="#" id="{{ info.slug }}" class="expandInfo">{{ info.name }}</a>
+        {% endfor %}
     </div>
 {% endblock %}
 
 {% block content %}
     <div id="content-main">
         <div class="toggled">
-            <div id="aboutTarget" style="display:none">
-                {% include "about.html" %}
-             </div>
-            <div id="helpTarget" style="display:none">
-                {% include "help.html" %}
-            </div>
-            <div id="creditsTarget" style="display:none">
-                {% include "credits.html" %}
-            </div>
-            <div id="termsTarget" style="display:none">
-                {% include "terms.html" %}
-            </div>
+            {% for info in additionalInfo %}
+              <div id="{{ info.slug }}Target" style="display: none" class="expandedInfo">
+                <div class="info">
+                  {% if info.contentType == 'HTML' %}
+                    {{ info.content|safe }}
+                  {% elif info.contentType == 'TEXT' %}
+                    <p>{{ info.content }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
         </div>
         <div class="searchPanel">
             {% if resultsOnly %}

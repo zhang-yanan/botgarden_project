@@ -10,6 +10,7 @@ from django import forms
 from cspace_django_site.main import cspace_django_site
 from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, setupCSV, setDisplayType, setConstants, loginfo
 from appconfig import CSVPREFIX, CSVEXTENSION, MAXRESULTS
+from .models import AdditionalInfo
 
 
 # global variables (at least to this module...)
@@ -31,6 +32,7 @@ def search(request):
         context = setConstants({})
 
     loginfo('start search', context, request)
+    context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
     return render(request, 'search.html', context)
 
 

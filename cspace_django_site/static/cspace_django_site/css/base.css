@@ -79,7 +79,8 @@ a:hover { color: #036; }
     width: 180px;
     vertical-align: top;
     position: relative;
-    height: 300px;
+    /* min-height: 320px; */
+    max-width: 600px;
     overflow: hidden;
 }
 

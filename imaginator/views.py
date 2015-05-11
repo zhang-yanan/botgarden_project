@@ -51,7 +51,7 @@ def index(request):
             context['musno'] = request.GET['musno']
             context['maxresults'] = 1
         if 'submit' in request.GET:
-            context['maxresults'] = 20
+            context['maxresults'] = MAXRESULTS
             if "Metadata" in request.GET['submit']:
                 context['resultType'] = 'metadata'
                 context['displayType'] = 'full'

@@ -105,30 +105,9 @@ $(document).ready(function () {
         }
     });
 
-
-    $('#about').click(function() {
-        chooseSlideDirection('#aboutTarget');
-        $('#helpTarget').slideUp();
-        $('#creditsTarget').slideUp();
-        $('#termsTarget').slideUp();
-    });
-    $('#help').click(function() {
-        chooseSlideDirection('#helpTarget');
-        $('#aboutTarget').slideUp();
-        $('#creditsTarget').slideUp();
-        $('#termsTarget').slideUp();
-    });
-    $('#terms').click(function() {
-        chooseSlideDirection('#termsTarget');
-        $('#helpTarget').slideUp();
-        $('#aboutTarget').slideUp();
-        $('#creditsTarget').slideUp();
-    });
-    $('#credits').click(function() {
-        chooseSlideDirection('#creditsTarget');
-        $('#helpTarget').slideUp();
-        $('#aboutTarget').slideUp();
-        $('#termsTarget').slideUp();
+    $('.expandInfo').click(function() {
+      chooseSlideDirection("#" + $(this).attr('id') + "Target");
+      $('.expandedInfo').not("#" + $(this).attr('id') + "Target").slideUp();
     });
     
     $("#acceptterms").click(function () {
