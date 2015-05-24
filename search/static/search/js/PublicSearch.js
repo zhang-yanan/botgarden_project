@@ -235,6 +235,18 @@ $(document).ready(function () {
         $('#select-items').prop('checked', false);
     });
 
+    $(document).on('click', '#summarize, #downloadstats', function () {
+        var formData = getFormData('#selectedItems');
+        formData[$(this).attr('name')] = '';
+        $.post("../statistics/", formData).done(function (data) {
+            $('#statsresults').html(data);
+        });
+
+        $('#statsListing').tablesorter({theme: 'blue'});
+
+        ga('send', 'pageview', { 'page': '/statistics' });
+    });
+
     $(document).on('click', '.map-item', function () {
         var Elem = $(this).siblings('.small-map');
         if ($(Elem).css("display") == "none") {
@@ -296,7 +308,7 @@ $(document).ready(function () {
 
     });
 
-    $(document).on('click', '#map-bmapper, #map-google, #statistics', function () {
+    $(document).on('click', '#map-bmapper, #map-google', function () {
         var formData = getFormData('#selectedItems');
         formData[$(this).attr('name')] = '';
 
@@ -310,11 +322,6 @@ $(document).ready(function () {
                 $('#maps').html(data);
             });
             ga('send', 'pageview', { 'page': '/map/google' });
-        } else if ($(this).attr('id') == 'statistics') {
-            $.post("../statistics/", formData).done(function (data) {
-                $('#statsresult').html(data);
-            });
-            ga('send', 'pageview', { 'page': '/statistics' });
         }
     });
 // we need to make sure this gets done in the event the page is created anew (e.g. via a pasted URL)
