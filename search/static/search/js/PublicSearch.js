@@ -296,7 +296,7 @@ $(document).ready(function () {
 
     });
 
-    $(document).on('click', '#map-bmapper, #map-google', function () {
+    $(document).on('click', '#map-bmapper, #map-google, #statistics', function () {
         var formData = getFormData('#selectedItems');
         formData[$(this).attr('name')] = '';
 
@@ -310,6 +310,11 @@ $(document).ready(function () {
                 $('#maps').html(data);
             });
             ga('send', 'pageview', { 'page': '/map/google' });
+        } else if ($(this).attr('id') == 'statistics') {
+            $.post("../statistics/", formData).done(function (data) {
+                $('#statsresult').html(data);
+            });
+            ga('send', 'pageview', { 'page': '/statistics' });
         }
     });
 // we need to make sure this gets done in the event the page is created anew (e.g. via a pasted URL)

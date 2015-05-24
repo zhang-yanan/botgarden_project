@@ -1,3 +1,31 @@
-x : {{ x }}
-<br/>
-y : {{ y }}
+{% spaceless %}
+    {% if summarizeon %}
+        <table cellspace="1" id="statsListing" class="tablesorter-blue">
+            <thead>
+            <tr>
+                <th>{{ summarizeonlabel }}</th>
+                <th>Count</th>
+                {% for f in summarylabels %}
+                    <th>{{ f }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in summaryrows %}
+                <tr>
+                    <td><b>{{ row.0 }}</b></td>
+                    <td>{{ row.1 }}</td>
+                    {% for cell in row.2 %}
+                        <td>{{ cell|safe }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% if time %}
+            <hr/>
+            search: {{ time }} seconds;
+            the rest: {{ summarytime }} seconds;
+        {% endif %}
+    {% endif %}
+{% endspaceless %}
