@@ -9,7 +9,7 @@ import logging
 from os import path
 from copy import deepcopy
 
-# from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 # from cspace_django_site.main import cspace_django_site
 
 # global variables
@@ -18,8 +18,8 @@ from appconfig import MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESE
 from appconfig import BMAPPERURL, BMAPPERCONFIGFILE, LOCALDIR, SEARCH_QUALIFIERS
 from appconfig import EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION
 from appconfig import VERSION, FIELDDEFINITIONS, getParms
-from appconfig import DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, \
-    TITLE, DEFAULTSORTKEY
+from appconfig import DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE
+from appconfig import CSVPREFIX, CSVEXTENSION, TITLE, DEFAULTSORTKEY, REQUIRED
 from appconfig import DERIVATIVECOMPACT, DERIVATIVEGRID, SIZECOMPACT, SIZEGRID
 
 SolrIsUp = True  # an initial guess! this is verified below...
@@ -27,7 +27,7 @@ SolrIsUp = True  # an initial guess! this is verified below...
 
 def loginfo(infotype, context, request):
     logdata = ''
-    #user = getattr(request, 'user', None)
+    # user = getattr(request, 'user', None)
     if request.user and not request.user.is_anonymous():
         username = request.user.username
     else:
@@ -52,7 +52,7 @@ def getfromXML(element, xpath):
 
 
 def deURN(urn):
-    #find identifier in URN
+    # find identifier in URN
     m = re.search("\'(.*)\'$", urn)
     if m is not None:
         # strip out single quotes
@@ -67,13 +67,13 @@ def getfields(fieldset, pickField):
             pick = 'solrfield'
         result.append([f[pick] for f in FIELDS[fieldset]])
     if len(pickField) > 1:
-        return zip(result[0],result[1])
+        return zip(result[0], result[1])
     else:
         return result[0]
 
 
 def getfacets(response):
-    #facets = response.get('facet_counts').get('facet_fields')
+    # facets = response.get('facet_counts').get('facet_fields')
     facets = response.facet_counts
     facets = facets['facet_fields']
     _facets = {}
@@ -117,19 +117,22 @@ def checkValue(cell):
     return cell
 
 
-def writeCsv(filehandle, items, writeheader, bmapper=False):
-    if bmapper:
+def writeCsv(filehandle, items, writeheader=False, csvFormat='csv'):
+    if csvFormat == 'bmapper':
         fieldset = getfields('bMapper', 'name')
+    elif csvFormat == 'statistics':
+        pass # fieldset not used for statistics download
     else:
         fieldset = getfields('inCSV', 'name')
     print "Fieldset: %s" % fieldset
     writer = csv.writer(filehandle, delimiter='\t')
     # write the header
-    writer.writerow(fieldset)
+    if writeheader:
+        writer.writerow(fieldset)
     for item in items:
         # get the cells from the item dict in the order specified; make empty cells if key is not found.
         row = []
-        if bmapper:
+        if csvFormat == 'bmapper':
             r = []
             for x in item['otherfields']:
                 if x['name'] not in fieldset:
@@ -141,6 +144,11 @@ def writeCsv(filehandle, items, writeheader, bmapper=False):
             r.append(l[1])
             for cell in r:
                 row.append(cell)
+
+        elif csvFormat == 'statistics':
+            for x in item:
+                cell = checkValue(x)
+                row.append(cell)
         else:
             for x in item['otherfields']:
                 if x['name'] not in fieldset:
@@ -149,6 +157,8 @@ def writeCsv(filehandle, items, writeheader, bmapper=False):
                 row.append(cell)
 
         writer.writerow(row)
+
+    return filehandle
 
 
 def getMapPoints(context, requestObject):
@@ -187,7 +197,7 @@ def setupGoogleMap(requestObject, context):
     markerlength = 200
     for item in context['items']:
         if item['csid'] in selected:
-            #if True:
+            # if True:
             try:
                 m = makeMarker(item['location'])
                 if markerlength > 2048: break
@@ -208,22 +218,12 @@ def setupGoogleMap(requestObject, context):
             '%s points plotted. all %s selected objects in result set examined.' % (len(markerlist), len(selected)))
     context['items'] = mappableitems
     context['markerlist'] = '&markers='.join(markerlist)
-    #context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
+    # context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
 
     #if len(markerlist) >= MAXMARKERS:
     #    context['mapmsg'].append(
     #        '%s points is the limit. Only first %s accessions (with latlongs) plotted!' % (MAXMARKERS, len(markerlist)))
 
-    return context
-
-
-def computeStats(requestObject, context):
-    context['summarizeonlabel'] = PARMS[requestObject['summarizeon']][0]
-    context['summarizeon'] = requestObject['summarizeon']
-    context['summaryrows'] = [requestObject[z] for z in requestObject if 'include-' in z]
-    context['summarylabels'] = [PARMS[var][0] for var in context['summaryrows']]
-    context = doSearch(context)
-    #context['summarylabels'] = [var for var in context['summaryrows']]
     return context
 
 
@@ -233,9 +233,8 @@ def setupBMapper(requestObject, context):
     mappableitems, numSelected = getMapPoints(context, requestObject)
     context['mapmsg'] = []
     filename = 'bmapper%s.csv' % datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
-    #filehandle = open(filename, 'wb')
     filehandle = open(path.join(LOCALDIR, filename), 'wb')
-    writeCsv(filehandle, mappableitems, writeheader=False, bmapper=True)
+    writeCsv(filehandle, mappableitems, writeheader=False, csvFormat='bmapper')
     filehandle.close()
     context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (
         len(mappableitems), numSelected, context['count']))
@@ -246,6 +245,15 @@ def setupBMapper(requestObject, context):
     context['bmapperurl'] = BMAPPERURL % (tabfile, bmapperconfigfile)
     return context
     # return HttpResponseRedirect(context['bmapperurl'])
+
+
+def computeStats(requestObject, context):
+    context['summarizeonlabel'] = PARMS[requestObject['summarizeon']][0]
+    context['summarizeon'] = requestObject['summarizeon']
+    context['summaryrows'] = [requestObject[z] for z in requestObject if 'include-' in z]
+    context['summarylabels'] = [PARMS[var][0] for var in context['summaryrows']]
+    context = doSearch(context)
+    return context
 
 
 def setupCSV(requestObject, context):
@@ -293,7 +301,7 @@ def extractValue(listItem, key):
     # handle dates (convert them to collatable strings)
     if isinstance(temp, datetime.date):
         try:
-            #item[p] = item[p].toordinal()
+            # item[p] = item[p].toordinal()
             temp = temp.isoformat().replace('T00:00:00+00:00', '')
         except:
             print 'date problem: ', temp
@@ -411,12 +419,13 @@ def doSearch(context):
     else:
         displayFields = context['displayType'] + 'Display'
 
-    facetfields = getfields('Facet','solrfield')
+    facetfields = getfields('Facet', 'solrfield')
     if 'summarize' in requestObject or 'downloadstats' in requestObject:
-        fl = [PARMS[p][3] for p in context['summaryrows']]
-        fl.append(PARMS[context['summarizeon']][3])
+        solrfl = [PARMS[p][3] for p in context['summaryrows']]
+        solrfl.append(PARMS[context['summarizeon']][3])
     else:
-        fl = getfields(displayFields,'solrfield')
+        solrfl = getfields(displayFields, 'solrfield')
+    solrfl += REQUIRED # always get these
     if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject or 'summarize' in requestObject or 'downloadstats' in requestObject:
         querystring = requestObject['querystring']
         url = requestObject['url']
@@ -427,7 +436,8 @@ def doSearch(context):
     else:
         for p in requestObject:
             if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane',
-                     'pixonly', 'locsonly', 'acceptterms', 'submit', 'start', 'sortkey', 'count', 'summarizeon']: continue
+                     'pixonly', 'locsonly', 'acceptterms', 'submit', 'start', 'sortkey', 'count', 'summarizeon',
+                     'summarize', 'summaryfields']: continue
             if '_qualifier' in p: continue
             if 'select-' in p: continue  # skip select control for map markers
             if 'include-' in p: continue  # skip form values used in statistics
@@ -489,6 +499,10 @@ def doSearch(context):
             urlterms.append('displayType=%s' % context['displayType'])
             urlterms.append('maxresults=%s' % context['maxresults'])
             urlterms.append('start=%s' % context['start'])
+
+            if 'summarize' in requestObject or 'downloadstats' in requestObject:
+                urlterms.append('summarize=%s' % context['summarizeon'])
+                urlterms.append('summaryfields=%s' % ','.join(context['summaryrows']))
         url = '&'.join(urlterms)
 
     if 'pixonly' in context:
@@ -513,12 +527,12 @@ def doSearch(context):
         context['start'] = 1
     try:
         solrtime = time.time()
-        response = s.query(querystring, facet='true', facet_field=facetfields, fq={}, fl=fl,
+        response = s.query(querystring, facet='true', facet_field=facetfields, fq={}, fields=solrfl,
                            rows=context['maxresults'], facet_limit=MAXFACETS, sort=context['sortkey'],
                            facet_mincount=1, start=startpage)
         print 'Solr search succeeded, %s results, %s rows requested starting at %s; %8.2f seconds.' % (
             response.numFound, context['maxresults'], startpage, time.time() - solrtime)
-    #except:
+    # except:
     except Exception as inst:
         #raise
         print 'Solr search failed: %s' % str(inst)
@@ -530,51 +544,56 @@ def doSearch(context):
     context['items'] = []
     summaryrows = {}
     imageCount = 0
-    for i, listItem in enumerate(results):
+    for i, rowDict in enumerate(results):
         item = {}
         item['counter'] = i
         otherfields = []
 
         if 'summarize' in requestObject or 'downloadstats' in requestObject:
-            summarizeon = extractValue(listItem, PARMS[context['summarizeon']][3])
-            summfields = [extractValue(listItem, PARMS[p][3]) for p in context['summaryrows']]
+            summarizeon = extractValue(rowDict, PARMS[context['summarizeon']][3])
+            summfields = [extractValue(rowDict, PARMS[p][3]) for p in context['summaryrows']]
             if not summarizeon in summaryrows:
-                summaryrows[summarizeon] = [0,[]]
-            summaryrows[summarizeon][1] = summfields
+                x = []
+                for ii in range(len(context['summaryrows'])): x.append([])
+                summaryrows[summarizeon] = [0, deepcopy(x)]
+            for sumi, sumcol in enumerate(summfields):
+                if not sumcol in summaryrows[summarizeon][1][sumi]:
+                    summaryrows[summarizeon][1][sumi] += [sumcol, ]
+                    # print summarizeon, sumi, sumcol, summaryrows[summarizeon][1][sumi]
             summaryrows[summarizeon][0] += 1
 
         # pull out the fields that have special functions in the UI
         for p in PARMS:
             if 'mainentry' in PARMS[p][1]:
-                item['mainentry'] = extractValue(listItem, PARMS[p][3])
+                item['mainentry'] = extractValue(rowDict, PARMS[p][3])
             elif 'accession' in PARMS[p][1]:
                 x = PARMS[p]
-                item['accession'] = extractValue(listItem, PARMS[p][3])
+                item['accession'] = extractValue(rowDict, PARMS[p][3])
                 item['accessionfield'] = PARMS[p][4]
             if 'sortkey' in PARMS[p][1]:
-                item['sortkey'] = extractValue(listItem, PARMS[p][3])
+                item['sortkey'] = extractValue(rowDict, PARMS[p][3])
 
         for p in FIELDS[displayFields]:
             try:
                 otherfields.append(
-                    {'label': p['label'], 'name': p['name'], 'value': extractValue(listItem, p['solrfield'])})
+                    {'label': p['label'], 'name': p['name'], 'value': extractValue(rowDict, p['solrfield'])})
             except:
                 pass
-                #raise
+                # raise
                 #otherfields.append({'label':p['label'],'value': ''})
         item['otherfields'] = otherfields
-        if 'csid_s' in listItem.keys():
-            item['csid'] = listItem['csid_s']
+        if 'csid_s' in rowDict.keys():
+            item['csid'] = rowDict['csid_s']
         # the list of blob csids need to remain an array, so restore it from psql result
-        if 'blob_ss' in listItem.keys():
-            item['blobs'] = listItem['blob_ss']
+        if 'blob_ss' in rowDict.keys():
+            item['blobs'] = rowDict['blob_ss']
             imageCount += len(item['blobs'])
-        if LOCATION in listItem.keys():
-            item['marker'] = makeMarker(listItem[LOCATION])
-            item['location'] = listItem[LOCATION]
+        if LOCATION in rowDict.keys():
+            item['marker'] = makeMarker(rowDict[LOCATION])
+            item['location'] = rowDict[LOCATION]
         context['items'].append(item)
 
-    #if context['displayType'] in ['full', 'grid'] and response._numFound > MAXRESULTS:
+    # if context['displayType'] in ['full', 'grid'] and response._numFound > MAXRESULTS:
     #    context['recordlimit'] = '(limited to %s for long display)' % MAXRESULTS
     #    context['items'] = context['items'][:MAXLONGRESULTS]
     if context['displayType'] in ['full', 'grid', 'list'] and response._numFound > context['maxresults']:
@@ -596,9 +615,9 @@ def doSearch(context):
     facets = getfacets(response)
     context['labels'] = [p['label'] for p in FIELDS[displayFields]]
     context['facets'] = [[m[f], facets[f]] for f in facetfields]
-    context['fields'] = getfields('Facet','label')
-    context['statsfields'] = getfields('inCSV','name,label,solrfield')
-    context['summaryrows'] = [[r,summaryrows[r][0],summaryrows[r][1]] for r in sorted(summaryrows.keys())]
+    context['fields'] = getfields('Facet', 'label')
+    context['statsfields'] = getfields('inCSV', 'name,label,solrfield')
+    context['summaryrows'] = [[r, summaryrows[r][0], summaryrows[r][1]] for r in sorted(summaryrows.keys())]
     context['range'] = range(len(facetfields))
     context['pixonly'] = pixonly
     context['locsonly'] = locsonly

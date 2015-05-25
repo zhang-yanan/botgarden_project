@@ -236,10 +236,27 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '#summarize, #downloadstats', function () {
+        $('#waitingImage').css({
+            display: "block"
+        });
+
         var formData = getFormData('#selectedItems');
         formData[$(this).attr('name')] = '';
-        $.post("../statistics/", formData).done(function (data) {
-            $('#statsresults').html(data);
+
+        if ($(this).attr('id') == 'summarize') {
+            $.post("../statistics/", formData).done(function (data) {
+                $('#statsresults').html(data);
+            });
+            ga('send', 'pageview', { 'page': '/summarize/display' });
+        } else if ($(this).attr('id') == 'downloadstats') {
+            $.post("../statistics/", formData).done(function (data) {
+                alert( "success" );
+            });
+            ga('send', 'pageview', { 'page': '/summarize/download' });
+        }
+
+        $('#waitingImage').css({
+            display: "none"
         });
 
         $('#statsListing').tablesorter({theme: 'blue'});

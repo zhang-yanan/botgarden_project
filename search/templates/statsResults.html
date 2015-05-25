@@ -15,8 +15,12 @@
                 <tr>
                     <td><b>{{ row.0 }}</b></td>
                     <td>{{ row.1 }}</td>
-                    {% for cell in row.2 %}
-                        <td>{{ cell|safe }}</td>
+                    {% for cells in row.2 %}
+                        <td>
+                            {% for cell in cells %}
+                                {{ cell|safe }}<br/>
+                            {% endfor %}
+                        </td>
                     {% endfor %}
                 </tr>
             {% endfor %}

@@ -84,15 +84,13 @@ def csv(request):
         if form.is_valid():
             context = {'searchValues': requestObject}
             csvitems = setupCSV(requestObject, context)
+            loginfo('csv', context, request)
 
-            # Create the HttpResponse object with the appropriate CSV header.
+            # create the HttpResponse object with the appropriate CSV header.
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="%s-%s.%s"' % (
-            CSVPREFIX, datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S"), CSVEXTENSION)
-            # response.write(u'\ufeff'.encode('utf8'))
-            writeCsv(response, csvitems, writeheader=True)
-            loginfo('csv', context, request)
-            return response
+                CSVPREFIX, datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S"), CSVEXTENSION)
+            return writeCsv(response, csvitems, writeheader=True, csvFormat='csv')
 
 
 def statistics(request):
@@ -107,7 +105,16 @@ def statistics(request):
             context = computeStats(requestObject, context)
             loginfo('statistics2', context, request)
             context['summarytime'] = '%8.2f' % (time.time() - elapsedtime)
-            return render(request, 'statsResults.html', context)
+            if 'downloadstats' in requestObject:
+                # create the HttpResponse object with the appropriate CSV header.
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="%s-%s.%s"' % (
+                    CSVPREFIX, datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S"), CSVEXTENSION)
+                    # filehandle.write(u'\ufeff'.encode('utf8'))
+                return writeCsv(response, context['summaryrows'], writeheader=True, csvFormat='statistics')
+                #return HttpResponse('wrote it')
+            else:
+                return render(request, 'statsResults.html', context)
 
 
 def loadNewFields(request, fieldfile):
