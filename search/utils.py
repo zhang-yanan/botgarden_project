@@ -627,6 +627,7 @@ def doSearch(context):
     context['fields'] = getfields('Facet', 'label')
     context['statsfields'] = getfields('inCSV', 'name,label,solrfield')
     context['summaryrows'] = [[r, summaryrows[r][0], summaryrows[r][1]] for r in sorted(summaryrows.keys())]
+    context['itemlisted'] = len(context['summaryrows'])
     context['range'] = range(len(facetfields))
     context['pixonly'] = pixonly
     context['locsonly'] = locsonly
