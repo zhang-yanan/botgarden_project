@@ -67,6 +67,7 @@ def getfields(fieldset, pickField):
             pick = 'solrfield'
         result.append([f[pick] for f in FIELDS[fieldset]])
     if len(pickField) > 1:
+        # is this right??
         return zip(result[0], result[1])
     else:
         return result[0]
@@ -117,14 +118,8 @@ def checkValue(cell):
     return cell
 
 
-def writeCsv(filehandle, items, writeheader=False, csvFormat='csv'):
-    if csvFormat == 'bmapper':
-        fieldset = getfields('bMapper', 'name')
-    elif csvFormat == 'statistics':
-        pass # fieldset not used for statistics download
-    else:
-        fieldset = getfields('inCSV', 'name')
-    print "Fieldset: %s" % fieldset
+def writeCsv(filehandle, fieldset, items, writeheader=False, csvFormat='csv'):
+    # print "Fieldset: %s" % fieldset
     writer = csv.writer(filehandle, delimiter='\t')
     # write the header
     if writeheader:
@@ -144,9 +139,13 @@ def writeCsv(filehandle, items, writeheader=False, csvFormat='csv'):
             r.append(l[1])
             for cell in r:
                 row.append(cell)
-
         elif csvFormat == 'statistics':
-            for x in item:
+            row.append(checkValue(item[0]))  # summarizeon
+            row.append(checkValue(item[1]))  # count
+            for x in item[2]:
+                if type(x) == type([]):
+                    x = '|'.join(x)
+                    pass
                 cell = checkValue(x)
                 row.append(cell)
         else:
@@ -201,7 +200,7 @@ def setupGoogleMap(requestObject, context):
             try:
                 m = makeMarker(item['location'])
                 if markerlength > 2048: break
-                #if len(mappableitems) >= MAXMARKERS: break
+                # if len(mappableitems) >= MAXMARKERS: break
                 if m is not None:
                     #print 'm= x%sx' % m
                     markerlist.append(m)
@@ -220,7 +219,7 @@ def setupGoogleMap(requestObject, context):
     context['markerlist'] = '&markers='.join(markerlist)
     # context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
 
-    #if len(markerlist) >= MAXMARKERS:
+    # if len(markerlist) >= MAXMARKERS:
     #    context['mapmsg'].append(
     #        '%s points is the limit. Only first %s accessions (with latlongs) plotted!' % (MAXMARKERS, len(markerlist)))
 
@@ -234,11 +233,11 @@ def setupBMapper(requestObject, context):
     context['mapmsg'] = []
     filename = 'bmapper%s.csv' % datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
     filehandle = open(path.join(LOCALDIR, filename), 'wb')
-    writeCsv(filehandle, mappableitems, writeheader=False, csvFormat='bmapper')
+    writeCsv(filehandle, getfields('bMapper', 'name'), mappableitems, writeheader=False, csvFormat='bmapper')
     filehandle.close()
     context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (
         len(mappableitems), numSelected, context['count']))
-    #context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
+    # context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
     context['items'] = mappableitems
     bmapperconfigfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, BMAPPERCONFIGFILE)
     tabfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, filename)
@@ -257,20 +256,32 @@ def computeStats(requestObject, context):
 
 
 def setupCSV(requestObject, context):
-    context = doSearch(context)
-    selected = []
-    # check to see if 'select all' is clicked...if so, skip checking individual items
-    if 'select-item' in requestObject:
-        csvitems = context['items']
+    if 'downloadstats' in requestObject:
+        context = computeStats(requestObject, context)
+        csvitems = context['summaryrows']
+        format = 'statistics'
     else:
-        for p in requestObject:
-            if 'item-' in p:
-                selected.append(requestObject[p])
-        csvitems = []
-        for item in context['items']:
-            if item['csid'] in selected:
-                csvitems.append(item)
-    return csvitems
+        format = 'csv'
+        context = doSearch(context)
+        selected = []
+        # check to see if 'select all' is clicked...if so, skip checking individual items
+        if 'select-item' in requestObject:
+            csvitems = context['items']
+        else:
+            for p in requestObject:
+                if 'item-' in p:
+                    selected.append(requestObject[p])
+            csvitems = []
+            for item in context['items']:
+                if item['csid'] in selected:
+                    csvitems.append(item)
+
+    if 'downloadstats' in requestObject:
+        fieldset = [context['summarizeonlabel'], 'N'] + context['summarylabels']
+    else:
+        fieldset = getfields('inCSV', 'name')
+
+    return format, fieldset, csvitems
 
 
 def setDisplayType(requestObject):
@@ -425,7 +436,7 @@ def doSearch(context):
         solrfl.append(PARMS[context['summarizeon']][3])
     else:
         solrfl = getfields(displayFields, 'solrfield')
-    solrfl += REQUIRED # always get these
+    solrfl += REQUIRED  # always get these
     if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject or 'summarize' in requestObject or 'downloadstats' in requestObject:
         querystring = requestObject['querystring']
         url = requestObject['url']
@@ -534,7 +545,7 @@ def doSearch(context):
             response.numFound, context['maxresults'], startpage, time.time() - solrtime)
     # except:
     except Exception as inst:
-        #raise
+        # raise
         print 'Solr search failed: %s' % str(inst)
         context['errormsg'] = 'Solr4 query failed'
         return context
@@ -580,7 +591,7 @@ def doSearch(context):
             except:
                 pass
                 # raise
-                #otherfields.append({'label':p['label'],'value': ''})
+                # otherfields.append({'label':p['label'],'value': ''})
         item['otherfields'] = otherfields
         if 'csid_s' in rowDict.keys():
             item['csid'] = rowDict['csid_s']
@@ -594,7 +605,7 @@ def doSearch(context):
         context['items'].append(item)
 
     # if context['displayType'] in ['full', 'grid'] and response._numFound > MAXRESULTS:
-    #    context['recordlimit'] = '(limited to %s for long display)' % MAXRESULTS
+    # context['recordlimit'] = '(limited to %s for long display)' % MAXRESULTS
     #    context['items'] = context['items'][:MAXLONGRESULTS]
     if context['displayType'] in ['full', 'grid', 'list'] and response._numFound > context['maxresults']:
         context['recordlimit'] = '(display limited to %s)' % context['maxresults']

@@ -235,7 +235,8 @@ $(document).ready(function () {
         $('#select-items').prop('checked', false);
     });
 
-    $(document).on('click', '#summarize, #downloadstats', function () {
+    $(document).on('click', '#summarize', function () {
+
         $('#waitingImage').css({
             display: "block"
         });
@@ -248,11 +249,11 @@ $(document).ready(function () {
                 $('#statsresults').html(data);
             });
             ga('send', 'pageview', { 'page': '/summarize/display' });
-        } else if ($(this).attr('id') == 'downloadstats') {
-            $.post("../statistics/", formData).done(function (data) {
-                alert( "success" );
-            });
-            ga('send', 'pageview', { 'page': '/summarize/download' });
+//        } else if ($(this).attr('id') == 'downloadstats') {
+//            $.post("../statistics/", formData).done(function (data) {
+//                alert( "success" );
+//            });
+//            ga('send', 'pageview', { 'page': '/summarize/download' });
         }
 
         $('#waitingImage').css({
