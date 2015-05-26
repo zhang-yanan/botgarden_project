@@ -173,7 +173,6 @@ def loadFields(fieldFile):
     LOCATION = ''
     DROPDOWNS = []
     FACETS = {}
-    REQUIRED = 'csid_s determination_s latlong_p'.split(' ')
 
     FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY = getParms(
         path.join(settings.BASE_PARENT_DIR, 'config/' + fieldFile))
@@ -234,6 +233,15 @@ def loadFields(fieldFile):
         errormsg = 'Solr query for facets failed: %s' % str(inst)
         solrIsUp = False
         print 'Solr facet search failed. Concluding that Solr is down or unreachable... Will not be trying again! Please fix and restart!'
+
+    # figure out which solr fields are the required ones...
+    REQUIRED = []
+    requiredfields = 'csid mainentry location accession objectno sortkey'.split(' ')
+    for p in PARMS:
+        for r in requiredfields:
+            if r in PARMS[p][1]:
+                REQUIRED.append(PARMS[p][3])
+    #csid_s determination_s latlong_p
 
     return DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY, REQUIRED
 

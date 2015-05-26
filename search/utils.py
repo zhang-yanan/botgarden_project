@@ -200,9 +200,7 @@ def setupGoogleMap(requestObject, context):
             try:
                 m = makeMarker(item['location'])
                 if markerlength > 2048: break
-                # if len(mappableitems) >= MAXMARKERS: break
                 if m is not None:
-                    #print 'm= x%sx' % m
                     markerlist.append(m)
                     mappableitems.append(item)
                     markerlength += len(m) + 8  # 8 is the length of '&markers='
