@@ -236,13 +236,12 @@ def loadFields(fieldFile):
 
     # figure out which solr fields are the required ones...
     REQUIRED = []
-    requiredfields = 'csid mainentry location accession objectno sortkey'.split(' ')
+    requiredfields = 'csid mainentry location accession objectno sortkey blob'.split(' ')
     for p in PARMS:
         for r in requiredfields:
             if r in PARMS[p][1]:
                 if PARMS[p][3] not in REQUIRED:
                     REQUIRED.append(PARMS[p][3])
-    #csid_s determination_s latlong_p
 
     return DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY, REQUIRED
 
