@@ -1,7 +1,7 @@
-# Parameters for UC Botanical Garden INTERNAL portal															
+#	Parameters for UC Botanical Garden INTERNAL portal														
 #															
-date	05/07/15														
-revision	1.9														
+date	05/26/15														
+revision	1.10														
 #															
 title	Plant Collection Information														
 #															
@@ -52,20 +52,20 @@ field	37	conservecat	Conservation Category	conservecat_ss	x		dropdown	8,2							
 field	38	voucherlist	Vouchers	voucherlist_ss	x		keyword	11,2			21			22	x
 field	39	vouchercount	Voucher Count	vouchercount_s	x		keyword								x
 field	40	text	Keyword	text	x		keyword	3,2							x
-field	41	floweringverbatim	Flowering (verbatim)	floweringverbatim_ss	x		keyword				22			23	x
 field	40	fruitingverbatim	Fruiting (verbatim)	fruitingverbatim_ss	x		keyword				23			24	x
-field	41	flowering	Flowering	flowering_ss	x		array=[jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec]	12,1			24				x
+field	41	floweringverbatim	Flowering (verbatim)	floweringverbatim_ss	x		keyword				22			23	x
 field	42	fruiting	Fruiting	fruiting_ss	x		array=[jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec]	13,1			25				x
-field	43	authorsParsed	Authors (parsed)	authorsParsed_s	x		keyword				26			25	x
-field	44	authorship	Authorship	authorship_s	x		keyword				27			26	x
-field	45	bracketAuthorship	Bracket Authorship	bracketAuthorship_s	x		keyword				28			27	x
-field	46	canonicalName	Canonical Name	canonicalName_s	x		keyword				29			28	x
-field	47	canonicalNameComplete	Canonical Name Complete	canonicalNameComplete_s	x		keyword				30			29	x
-field	48	canonicalNameWithMarker	Canonical Name With Marker	canonicalNameWithMarker_s	x		keyword				31			30	x
-field	49	genusOrAbove	Genus or above	genusOrAbove_s	x		keyword				32			31	x
-field	50	infraSpecificEpithet	Infraspecific Epithet	infraSpecificEpithet_s	x		keyword				33			32	x
-field	51	rankMarker	Rank Marker	rankMarker_s	x		keyword				34			33	x
-field	52	scientificName	Scientific Name	scientificName_s	x		keyword				35			34	x
-field	53	specificEpithet	Specific Epithet	specificEpithet_s	x		keyword				35			35	x
-field	54	type	Type	type_s	x		dropdown				37			36	x
-field	55	blobs	Images	blob_ss	x		blob							37	x
+field	43	flowering	Flowering	flowering_ss	x		array=[jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec]	12,1			24				x
+field	44	authorsParsed	Authors (parsed)	authorsParsed_s	x		keyword	1,3			26			25	x
+field	45	authorship	Authorship	authorship_s	x		keyword	2,3			27			26	x
+field	46	bracketAuthorship	Bracket Authorship	bracketAuthorship_s	x		keyword	3,3			28			27	x
+field	47	canonicalName	Canonical Name	canonicalName_s	x		keyword	4,3			29			28	x
+field	48	canonicalNameComplete	Canonical Name Complete	canonicalNameComplete_s	x		keyword	5,3			30			29	x
+field	49	canonicalNameWithMarker	Canonical Name With Marker	canonicalNameWithMarker_s	x		keyword				31			30	x
+field	50	genusOrAbove	Genus or above	genusOrAbove_s	x		keyword	6,3			32			31	x
+field	51	infraSpecificEpithet	Infraspecific Epithet	infraSpecificEpithet_s	x		keyword	7,3			33			32	x
+field	52	rankMarker	Rank Marker	rankMarker_s	x		keyword	8,3			34			33	x
+field	53	scientificName	Scientific Name	scientificName_s	x		keyword				35			34	x
+field	54	specificEpithet	Specific Epithet	specificEpithet_s	x		keyword	9,3			35			35	x
+field	55	type	Type	type_s	x		dropdown				37			36	x
+field	56	blobs	Images	blob_ss	x		blob							37	x
