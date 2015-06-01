@@ -73,20 +73,19 @@ def solrtransaction(q, elementID):
 
         facets = response.facet_counts
         facets = facets['facet_fields']
-        #_facets = {}
         result = []
         for key, values in facets.items():
-            #_v = []
             for k, v in values.items():
-                #_v.append((k, v))
                 missingatoken = filter(lambda x: x not in k.lower(), q2)
                 if not missingatoken:
-                    result.append({'value': k})
-            #_facets[key] = sorted(_v, key=lambda (a, b): b, reverse=True)
+                    result.append(k)
 
+        result.sort(key=lambda v: v.upper())
+        result = [ {'value': v} for v in result]
         result.append({'s': solrField})
 
-        return json.dumps(result)    # or "json.dump(result, sys.stdout)"
+        # return suggested in alphabetical order (case insensitive)
+        return json.dumps(result)
 
     except:
         raise
