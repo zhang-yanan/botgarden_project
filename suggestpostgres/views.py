@@ -24,7 +24,7 @@ import cgi
 import cgitb;
 
 cgitb.enable()  # for troubleshooting
-import pgdb
+import psycopg2
 
 form = cgi.FieldStorage()
 
@@ -39,7 +39,7 @@ def makeTemplate(table,term,expression):
             WHERE %s %s ORDER BY %s LIMIT 30;""" % (term,table,term,expression,term)
 
 def dbtransaction(q, elementID, connect_string):
-    postgresdb = pgdb.connect(database=connect_string)
+    postgresdb = psycopg2.connect(database=connect_string)
     cursor = postgresdb.cursor()
 
     # elementID is of the form xx.csid, where xx is a 2-letter code and csid is the csid of the record
@@ -118,7 +118,7 @@ def dbtransaction(q, elementID, connect_string):
 
         return json.dumps(result)    # or "json.dump(result, sys.stdout)"
 
-    except pgdb.DatabaseError, e:
+    except psycopg2.DatabaseError, e:
         sys.stderr.write('autosuggest select error: %s' % e)
         return None
     except:

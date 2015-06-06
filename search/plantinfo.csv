@@ -68,5 +68,5 @@ field	52	infraSpecificEpithet	Infraspecific Epithet	infraSpecificEpithet_s	x		ke
 field	53	rankMarker	Rank Marker	rankMarker_s	x		keyword	8,3			33			34	x
 field	54	scientificName	Scientific Name	scientificName_s	x		keyword				34			35	x
 field	55	specificEpithet	Specific Epithet	specificEpithet_s	x		keyword	9,3			35			36	x
-field	56	type	Type	type_s	x		dropdown							37	x
+field	56	type	Type	type_s	x		dropdown				36			37	x
 field	57	blobs	Images	blob_ss	x		blob								x
