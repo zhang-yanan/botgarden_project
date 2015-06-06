@@ -3,6 +3,7 @@ __author__ = 'jblowe'
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.conf import settings
+from os import path
 
 from cspace_django_site.main import cspace_django_site
 from common import cspace
@@ -14,8 +15,9 @@ hostname = cspace.getConfigOptionWithSection(config,
 
 TITLE = 'Applications Available'
 
-hiddenApps = 'hello service suggest suggestsolr suggestpostgres solarapi imageserver landing locviewer batchuploadimages rest_framework'.split(' ')
-loginRequiredApps = 'ireports search uploadmedia toolbox'.split(' ')
+landingConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'landing')
+hiddenApps = landingConfig.get('landing', 'hiddenApps').split(',')
+loginRequiredApps = landingConfig.get('landing', 'loginRequiredApps').split(',')
 
 #@login_required()
 def index(request):
