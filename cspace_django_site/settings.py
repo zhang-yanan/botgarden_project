@@ -11,6 +11,13 @@ PROJECT_NAME = os.path.basename(BASE_PARENT_DIR)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+import django.conf.global_settings as DEFAULT_SETTINGS  # http://stackoverflow.com/a/15446953/1763984
+GOOGLE_ANALYTICS = False
+TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
+    'django.core.context_processors.request',
+    'cspace_django_site.context_processors.settings',
+)
+
 ADMINS = (
     # ('Your Name', 'your_email@intakes.com'),
 )
