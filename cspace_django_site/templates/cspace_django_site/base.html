@@ -5,10 +5,10 @@
     <title>{% block title %}{% endblock %}</title>
     
     {% block scripts %}{% endblock %}
-    
-    {% if googleAnalytics %}
+
+    <!-- {% if googleAnalytics %} -->
     <script type="text/javascript" src="{% static "cspace_django_site/js/ua.js" %}"></script>
-    {% endif %}
+    <!-- {% endif %} -->
     
     <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/reset.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "cspace_django_site/css/base.css" %}{% endblock %}" />
