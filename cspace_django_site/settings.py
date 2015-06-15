@@ -39,7 +39,8 @@ DATABASES = {
 #CACHES = {
 #    'default': {
 #        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-#        'LOCATION': '/tmp/image_cache',
+#        #'LOCATION': '/home/app_webapps/cache/' + PROJECT_NAME + '/images',
+#        'LOCATION': '/tmp/' + PROJECT_NAME + '/images',
 #        'CULL_FREQUENCY': 1000,
 #        'OPTIONS': {
 #            'MAX_ENTRIES': 1000000
