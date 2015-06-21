@@ -13,7 +13,7 @@
     </tr>
         {% for csid, reportname, file in reportData %}
         <tr>
-            {% if file == 'CSpace only' %}
+            {% if file == 'CSpace only' or file == 'Found in CSpace, not configured for this webapp' %}
                 <!-- td>{{ reportname }}</td><td>{{ file }}</td -->
             {% else %}
                 <td><a href="{{ csid }}">{{ reportname }}</a></td><td>{{ file }}</td>

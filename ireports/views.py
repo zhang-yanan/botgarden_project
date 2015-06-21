@@ -57,8 +57,10 @@ def enumerateReports():
 def getReportparameters(filename):
     parms = {}
     csidParms = True
+    fileFound = False
     try:
         reportXML = parse(JRXMLDIRPATTERN % filename)
+        fileFound = True
         parameters = reportXML.findall('{http://jasperreports.sourceforge.net/jasperreports}parameter')
         #print 'parameters',parameters
         for p in parameters:
@@ -79,7 +81,7 @@ def getReportparameters(filename):
         #raise
         # indicate that .jrxml file was not found...
         print 'jrxml file not found, no parms extracted.'
-    return parms,csidParms
+    return parms,csidParms,fileFound
 
 
 def makePayload(parms):
@@ -128,8 +130,9 @@ def index(request):
         fileName = reportXML.find('.//filename')
         fileName = fileName.text
         fileName = fileName.replace('.jasper','.jrxml')
-        parms,displayReport = getReportparameters(fileName)
+        parms,displayReport,fileFound = getReportparameters(fileName)
         fileName = fileName if displayReport else 'CSpace only'
+        fileName = fileName if fileFound else 'Found in CSpace, not configured for this webapp'
         fileNames.append(fileName)
         #print fileName
     reportData = zip(reportCsids, reportNames, fileNames)
