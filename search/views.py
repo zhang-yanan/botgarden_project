@@ -9,8 +9,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django import forms
 from cspace_django_site.main import cspace_django_site
-from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, computeStats, setupCSV, setDisplayType, \
-    setConstants, loginfo
+from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, computeStats, setupCSV, setDisplayType, setConstants, loginfo
 from appconfig import CSVPREFIX, CSVEXTENSION, MAXRESULTS
 from .models import AdditionalInfo
 
@@ -31,7 +30,7 @@ def search(request):
         context = doSearch(context)
 
     else:
-        context = setConstants({})
+        context = setConstants({}, '', False)
 
     loginfo('start search', context, request)
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
@@ -118,8 +117,7 @@ def statistics(request):
                 return HttpResponse('Please pick some values!')
 
 def loadNewFields(request, fieldfile):
-    loadFields(fieldfile + '.csv')
 
-    context = setConstants({})
+    context = setConstants({}, fieldfile, True)
     loginfo('loaded fields', context, request)
     return render(request, 'search.html', context)
