@@ -167,7 +167,7 @@ def ireport(request, report_csid):
             return response
     else:
         # for now, we have to get the parms by reading and parsing the .jrxml file ourselves
-        parms,displayReport = getReportparameters(fileName)
+        parms,displayReport,fileFound = getReportparameters(fileName)
         form = forms.Form()
         for p in parms:
             if str(parms[p][1]) == 'false':
