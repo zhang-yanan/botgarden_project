@@ -164,6 +164,7 @@ INSTALLED_APPS = (
     'ireports',
     'imaginator',
     'search'
+    'search-propagations'
 )
 
 # A sample logging configuration. The only tangible logging
