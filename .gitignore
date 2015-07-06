@@ -6,3 +6,4 @@ config/*.cfg
 config/*.csv
 *.DS_Store
 .idea
+cspace_django_site/secret_key.py
