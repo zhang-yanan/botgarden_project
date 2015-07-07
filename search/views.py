@@ -22,7 +22,7 @@ from appconfig import loadFields
 def direct(request):
     return redirect('search/')
 
-
+@login_required()
 def search(request):
     if request.method == 'GET' and request.GET != {}:
         context = {'searchValues': dict(request.GET.iteritems())}
