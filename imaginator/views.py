@@ -22,6 +22,7 @@ CSPACESERVER = config.get('imaginator', 'CSPACESERVER')
 SOLRSERVER = config.get('imaginator', 'SOLRSERVER')
 SOLRCORE = config.get('imaginator', 'SOLRCORE')
 TITLE = config.get('imaginator', 'TITLE')
+INSTITUTION = config.get('imaginator', 'INSTITUTION')
 SUGGESTIONS = config.get('imaginator', 'SUGGESTIONS')
 LAYOUT = config.get('imaginator', 'LAYOUT')
 
@@ -42,8 +43,6 @@ def index(request):
 
     if request.method == 'GET' and request.GET != {}:
         context['searchValues'] = request.GET
-
-        context = setConstants(context)
 
         if 'text' in request.GET:
             context['text'] = request.GET['text']
@@ -69,11 +68,9 @@ def index(request):
         # do search
         loginfo('start search', context, request)
         context = doSearch(context)
-        context['loginBtnNext'] = 'imaginator/'
 
         return render(request, 'imagineImages.html', context)
 
     else:
-        context['loginBtnNext'] = 'imaginator/'
         
         return render(request, 'imagineImages.html', context)

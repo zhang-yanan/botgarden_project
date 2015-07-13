@@ -28,4 +28,4 @@ def index(request):
         appList = [app for app in appList if not app in loginRequiredApps]
     
     appList.sort()
-    return render(request, 'listApps.html', {'appList': appList, 'labels': 'name file'.split(' '), 'title': TITLE, 'hostname': hostname})
+    return render(request, 'listApps.html', {'appList': appList, 'labels': 'name file'.split(' '), 'title': TITLE, 'hostname': hostname, 'base': settings.WSGI_BASE})

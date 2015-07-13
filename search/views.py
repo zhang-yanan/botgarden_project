@@ -9,8 +9,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django import forms
 from cspace_django_site.main import cspace_django_site
-from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, computeStats, setupCSV, setDisplayType, \
-    setConstants, loginfo
+from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, computeStats, setupCSV, setDisplayType, setConstants, loginfo
 from appconfig import CSVPREFIX, CSVEXTENSION, MAXRESULTS
 from .models import AdditionalInfo
 
@@ -22,7 +21,6 @@ from appconfig import loadFields
 
 def direct(request):
     return redirect('search/')
-
 
 @login_required()
 def search(request):
@@ -98,6 +96,7 @@ def csv(request):
                 context['messages'] = messages
                 return search(request)
 
+
 def statistics(request):
     if request.method == 'POST' and request.POST != {}:
         requestObject = dict(request.POST.iteritems())
@@ -116,6 +115,7 @@ def statistics(request):
             except:
                 context['summarytime'] = '%8.2f' % (time.time() - elapsedtime)
                 return HttpResponse('Please pick some values!')
+
 
 def loadNewFields(request, fieldfile):
     loadFields(fieldfile + '.csv')
