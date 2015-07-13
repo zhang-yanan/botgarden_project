@@ -319,10 +319,10 @@ def extractValue(listItem, key):
     return temp
 
 
-def setConstants(context, fieldfile, reload):
+def setConstants(context):
 
-    if reload:
-        DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY, REQUIRED = loadFields(fieldfile + '.csv')
+    # if reload:
+    #     DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY, REQUIRED = loadFields(fieldfile + '.csv')
 
     if not SolrIsUp: context['errormsg'] = 'Solr is down!'
     context['suggestsource'] = SUGGESTIONS
@@ -409,7 +409,7 @@ def doSearch(context):
     elapsedtime = time.time()
     solr_server = SOLRSERVER
     solr_core = SOLRCORE
-    context = setConstants(context, '', False)
+    context = setConstants(context)
     requestObject = context['searchValues']
 
     formFields = deepcopy(FIELDS)

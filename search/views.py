@@ -29,7 +29,7 @@ def search(request):
         context = doSearch(context)
 
     else:
-        context = setConstants({}, '', False)
+        context = setConstants({})
 
     loginfo('start search', context, request)
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
@@ -118,7 +118,7 @@ def statistics(request):
 
 
 def loadNewFields(request, fieldfile):
-
-    context = setConstants({}, fieldfile, True)
+    loadFields(fieldfile + '.csv')
+    context = setConstants({})
     loginfo('loaded fields', context, request)
     return render(request, 'search.html', context)
