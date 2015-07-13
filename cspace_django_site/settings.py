@@ -163,7 +163,8 @@ INSTALLED_APPS = (
     'suggest',
     'ireports',
     'imaginator',
-    'search'
+    'search',
+    'internal'
 )
 
 # A sample logging configuration. The only tangible logging
