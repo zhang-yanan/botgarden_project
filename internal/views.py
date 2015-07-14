@@ -9,7 +9,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django import forms
 from cspace_django_site.main import cspace_django_site
-from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, computeStats, setupCSV, setDisplayType, setConstants, loginfo
+from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, computeStats, setupCSV, setDisplayType, \
+    setConstants, loginfo
 from appconfig import CSVPREFIX, CSVEXTENSION, MAXRESULTS
 from .models import AdditionalInfo
 
@@ -18,9 +19,10 @@ from .models import AdditionalInfo
 
 from appconfig import loadFields
 
-
+@login_required()
 def direct(request):
     return redirect('search/')
+
 
 @login_required()
 def search(request):
@@ -35,7 +37,7 @@ def search(request):
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
     return render(request, 'search.html', context)
 
-
+@login_required()
 def retrieveResults(request):
     if request.method == 'POST' and request.POST != {}:
         requestObject = dict(request.POST.iteritems())
@@ -48,7 +50,7 @@ def retrieveResults(request):
         loginfo('results.%s' % context['displayType'], context, request)
         return render(request, 'searchResults.html', context)
 
-
+@login_required()
 def bmapper(request):
     if request.method == 'POST' and request.POST != {}:
         requestObject = dict(request.POST.iteritems())
@@ -61,7 +63,7 @@ def bmapper(request):
             loginfo('bmapper', context, request)
             return HttpResponse(context['bmapperurl'])
 
-
+@login_required()
 def gmapper(request):
     if request.method == 'POST' and request.POST != {}:
         requestObject = dict(request.POST.iteritems())
@@ -74,7 +76,7 @@ def gmapper(request):
             loginfo('gmapper', context, request)
             return render(request, 'maps.html', context)
 
-
+@login_required()
 def csv(request):
     if request.method == 'POST' and request.POST != {}:
         requestObject = dict(request.POST.iteritems())
@@ -96,7 +98,7 @@ def csv(request):
                 context['messages'] = messages
                 return search(request)
 
-
+@login_required()
 def statistics(request):
     if request.method == 'POST' and request.POST != {}:
         requestObject = dict(request.POST.iteritems())
@@ -116,9 +118,10 @@ def statistics(request):
                 context['summarytime'] = '%8.2f' % (time.time() - elapsedtime)
                 return HttpResponse('Please pick some values!')
 
-
+@login_required()
 def loadNewFields(request, fieldfile):
     loadFields(fieldfile + '.csv')
+
     context = setConstants({})
     loginfo('loaded fields', context, request)
     return render(request, 'search.html', context)

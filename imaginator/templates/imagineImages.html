@@ -54,12 +54,11 @@
                 {% if item.blobs %}
                     {% for t in item.blobs %}
                         <a target="image"
-                           href="http://dev.cspace.berkeley.edu/pahma_project/imageserver/blobs/{{ t }}/derivatives/OriginalJpeg/content">
-                            <img src="http://dev.cspace.berkeley.edu/pahma_project/imageserver/blobs/{{ t }}/derivatives/Thumbnail/content">
+                           href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content">
+                            <img src="{{ imageserver }}/blobs/{{ t }}/derivatives/Thumbnail/content">
                         </a>
                     {% endfor %}
-                    <br/><a target="cspace"
-                            href="../search/search?displayType=full&maxresults=1&resultsOnly=True&text=%22{{ item.accession }}%22">{{ item.accession }}</a>
+                    <br/><b><a target="cspace" href="?maxresults=1&displayType=full&{{ item.accessionfield }}={{ item.accession }}">{{ item.accession }}</a></b>
                     <br/><b>{{ item.mainentry }}</b>
                 {% endif %}
             </div>

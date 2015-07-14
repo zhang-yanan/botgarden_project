@@ -8,7 +8,6 @@ import logging
 
 from os import path
 from copy import deepcopy
-from appconfig import loadFields
 
 from django.http import HttpResponse, HttpResponseRedirect
 # from cspace_django_site.main import cspace_django_site
@@ -320,10 +319,6 @@ def extractValue(listItem, key):
 
 
 def setConstants(context):
-
-    # if reload:
-    #     DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY, REQUIRED = loadFields(fieldfile + '.csv')
-
     if not SolrIsUp: context['errormsg'] = 'Solr is down!'
     context['suggestsource'] = SUGGESTIONS
     context['title'] = TITLE
