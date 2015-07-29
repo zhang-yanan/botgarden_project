@@ -6,9 +6,12 @@
     
     {% block scripts %}{% endblock %}
 
-    <!--  if googleAnalytics  -->
+    <script type="text/javascript" src="{% static "cspace_django_site/js/enable.js" %}"></script>
     <script type="text/javascript" src="{% static "cspace_django_site/js/ua.js" %}"></script>
-    <!--  endif  -->
+    <script type="text/javascript">
+        var googleAnalytics = {{ googleAnalytics }};
+        enablega('send', 'pageview', undefined, googleAnalytics);
+    </script>
     
     <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/reset.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "cspace_django_site/css/base.css" %}{% endblock %}" />

@@ -12,6 +12,9 @@
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
     <script type="text/javascript" src="{% static "search/js/PublicSearch.js" %}"></script>
+    <script type="text/javascript">
+        var googleAnalytics = {{ googleAnalytics }};
+    </script>
     <script type="text/javascript" src="{% static "search/js/jquery.tablesorter.min.js" %}"></script>
 {% endblock %}
 

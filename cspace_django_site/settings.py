@@ -36,18 +36,6 @@ DATABASES = {
     }
 }
 
-#CACHES = {
-#    'default': {
-#        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-#        #'LOCATION': '/home/app_webapps/cache/' + PROJECT_NAME + '/images',
-#        'LOCATION': '/tmp/' + PROJECT_NAME + '/images',
-#        'CULL_FREQUENCY': 1000,
-#        'OPTIONS': {
-#            'MAX_ENTRIES': 1000000
-#        }
-#    }
-#}
-
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
@@ -137,12 +125,6 @@ ROOT_URLCONF = 'cspace_django_site.urls'
 WSGI_APPLICATION = 'cspace_django_site.wsgi.application'
 
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
-
-#TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-#)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -268,3 +250,8 @@ except ImportError:
     from utils.secret_key_gen import *
     generate_secret_key(os.path.join(SETTINGS_DIR, 'secret_key.py'))
     from secret_key import *
+
+try:
+	from extra_settings import *
+except ImportError, exp:
+	pass
