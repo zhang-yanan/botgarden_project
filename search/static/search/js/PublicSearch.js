@@ -237,33 +237,30 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '#summarize', function () {
-
-        $('#waitingImage').css({
-            display: "block"
-        });
-
         var formData = getFormData('#selectedItems');
         formData[$(this).attr('name')] = '';
 
         if ($(this).attr('id') == 'summarize') {
+            $('#waitingImage').css({
+                display: "block"
+            });
+
             $.post("../statistics/", formData).done(function (data) {
                 $('#statsresults').html(data);
+
+                $('#statsListing').tablesorter({theme: 'blue'});
+                $('#waitingImage').css({
+                    display: "none"
+                });
+                enablega('send', 'pageview', { 'page': '/summarize/display' }, googleAnalytics);
             });
-            enablega('send', 'pageview', { 'page': '/summarize/display' }, googleAnalytics);
 //        } else if ($(this).attr('id') == 'downloadstats') {
 //            $.post("../statistics/", formData).done(function (data) {
 //                alert( "success" );
 //            });
 //            enablega('send', 'pageview', { 'page': '/summarize/download' }, googleAnalytics);
         }
-
-        $('#waitingImage').css({
-            display: "none"
-        });
-
-        $('#statsListing').tablesorter({theme: 'blue'});
-
-        enablega('send', 'pageview', { 'page': '/statistics' }, googleAnalytics);
+//      enablega('send', 'pageview', { 'page': '/statistics' }, googleAnalytics);
     });
 
     $(document).on('click', '.map-item', function () {
