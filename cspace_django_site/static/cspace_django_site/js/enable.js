@@ -1,13 +1,13 @@
 function enablega(method, id, obj, googleAnalytics) {
     var tracker = '';
     if (googleAnalytics == 1) {
-         tracker = 'prodtracker.';
+        tracker = 'prodtracker.';
     } else if (googleAnalytics == -1) {
-         tracker = 'uitracker.';
+        tracker = 'uitracker.';
     }
     if (typeof obj === undefined) {
-         return ga(tracker + method, id);
+        ga(tracker + method, id);
     } else {
-        return ga(tracker + method, id, obj);
+        ga(tracker + method, id, obj);
     }
 }
