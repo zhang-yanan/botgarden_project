@@ -125,6 +125,7 @@ $(document).ready(function () {
     $('#search-list, #search-full, #search-grid').click(function () {
         display = $(this).attr('name');
         submitForm($(this).attr('name'));
+
     });
 
     $('#search input[type=text]').keypress(function(event) {
@@ -236,6 +237,7 @@ $(document).ready(function () {
         $('#select-items').prop('checked', false);
     });
 
+
     $(document).on('click', '#summarize', function () {
         var formData = getFormData('#selectedItems');
         formData[$(this).attr('name')] = '';
@@ -299,7 +301,6 @@ $(document).ready(function () {
                 }
             }
         }
-
         var formData = getFormData('#search');
         // TODO: CURRENTLY DEFAULT TO SEARCH-LIST BUT SHOULD HAVE A PERSISTENT DISPLAY TYPE? CURRENTLY DOESN'T ON DEV
         formData['search-list'] = '';
@@ -321,7 +322,6 @@ $(document).ready(function () {
             $('#tabs').tabs({ active: 1 });
             enablega('send', 'pageview', { 'page': '/search/refine' }, googleAnalytics);
         });
-
     });
 
     $(document).on('click', '#map-bmapper, #map-google', function () {
@@ -347,4 +347,3 @@ $('#tabs').tabs({ active: 0 });
 // on the first load (or a reload) of the page, clear the form...
 //clearForm($('#search')[0]);
 });
-
