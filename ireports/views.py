@@ -137,7 +137,7 @@ def index(request):
         #print fileName
     reportData = zip(reportCsids, reportNames, fileNames)
     reportData = sorted(reportData, key=itemgetter(1))
-    return render(request, 'listReports.html', {'reportData': reportData, 'labels': 'name file'.split(' '), 'title': TITLE})
+    return render(request, 'listReports.html', {'reportData': reportData, 'labels': 'name file'.split(' '), 'apptitle': TITLE})
 
 
 @login_required()
@@ -176,5 +176,5 @@ def ireport(request, report_csid):
                 form.fields[p] = forms.CharField(initial=parms[p][0], help_text=parms[p][2], required=True)
         
     return render_to_response('getReportParms.html',
-                              {'report_csid': report_csid, 'form': form, 'report': name},
+                              {'report_csid': report_csid, 'form': form, 'report': name, 'apptitle': TITLE},
                               context_instance=RequestContext(request))
