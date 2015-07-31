@@ -16,7 +16,7 @@
     {% endblock %}
 {% else %}
     <a href="{% url 'login' %}?next={% url request.resolver_match.view_name %}" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
-    {% if request.resolver_match.namespace != 'landing' %}
+    {% if request.resolver_match.namespace != 'landing' and request.resolver_match.namespace != '' %}
     <div class="line">
         <div style="display: block;"><a href="{% url 'landing:index' %}" style="margin: 8px 0 0 0; float:right;">All available webapps</a></div>
     </div>
