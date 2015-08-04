@@ -114,7 +114,7 @@ def checkValue(cell):
             cell = cell.decode('utf-8', 'ignore').encode('utf-8')
         except:
             print 'unicode problem', cell.encode('utf-8', 'ignore')
-            cell = u'invalid unicode data'
+            cell = cell.encode('utf-8', 'ignore')
     return cell
 
 
