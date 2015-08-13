@@ -60,11 +60,23 @@
                                     <input type="checkbox" id="{{ field }}_include_child" name="{{ field }}_include_child">
                                 </td>
                             {% else %}
-                                <td colspan="2" {% if field.style %} style="{{ field.style }}"{% endif %}>
+                                <td colspan="1" {% if field.style %} style="{{ field.style }}"{% endif %}>
                                     <label>{{ field.label }}</label>
                                 </td>
-                                <td>
-                                    <input type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}" value="{{ field.value }}"/>
+                                <td colspan="4">
+                                   <!-- <input type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}" value="{{ field.value }}"/>-->
+                                    <lable>Jan<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "jan"/></lable>
+                                    <lable>Feb<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "feb"/></lable>
+                                    <lable>Mar<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "mar"/></lable>
+                                    <lable>Apr<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "apr"/></lable>
+                                    <lable>May<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "may"/></lable>
+                                    <lable>Jun<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "jun"/></lable>
+                                    <lable>Jul<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "jul"/></lable>
+                                    <lable>Aug<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "aug"/></lable>
+                                    <lable>Sep<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "sep"/></lable>
+                                    <lable>Oct<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "oct"/></lable>
+                                    <lable>Nov<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "nov"/></lable>
+                                    <lable>Dec<input type = "checkbox" id=" {{ field.name }}" name = "{{ field.name }}" value = "dec"/></lable>
                                 </td>
                             {% endif %}
                         {% endif %}

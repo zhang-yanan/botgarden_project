@@ -38,7 +38,24 @@
 
             {% for i in item.otherfields %}
                 {% if i.value %}
-                    <div>{{ i.label }}: <a class="facet-item" data-facetType="{{ i.name }}">{{ i.value }}</a></div>
+                    <div>{{ i.label }}: <a class="facet-item" data-facetType="{{ i.name }}">
+                        {% if 'Fruiting (verbatim)' in i.label or 'Flowering (verbatim)' in i.label%}
+                            <table border="2">
+                                <tr>
+                                    <th>Jan</th><th>Feb</th><th>March</th><th>April</th><th>May</th><th>June</th><th>July</th><th>Aug</th><th>Sept</th><th>Oct</th><th>Nov</th><th>Dec</th>
+                                </tr>
+                                <tr>
+                                {% load myfilter %}
+                                    {% for val in i.value|mysplit:'|' %}
+                                    <td>{% if val == 'f' %}No{% elif val == 't' %}Yes{% else %}{{val}}{% endif %}</td>
+                                    {% endfor%}
+                                </tr>
+                            </table>
+                        {% else %}
+                            {{ i.value }}
+                        {% endif %}
+                        </a>
+                    </div>
                 {% endif %}
             {% endfor %}
 
